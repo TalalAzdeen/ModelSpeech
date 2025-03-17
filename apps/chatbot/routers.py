@@ -1,12 +1,19 @@
 from fastapi import APIRouter
 
 class UserHandler:
-    router = APIRouter()
+    def __init__(self,builder):
+        self.__router = APIRouter()
+        self.__builder=builder
+    
 
-    @router.get("/users")
-    def get_users():
-        return {"message": "List of users"}
+        @self.router.get("/users")
+        def get_users():
+            return {"message": "List of users"}
 
-    @router.get("/users/{user_id}")
-    def get_user(user_id: int):
-        return {"message": f"User {user_id}"}
+        @self.router.get("/users/{user_id}")
+        def get_user(user_id: int):
+            return {"message": f"User {user_id}"}
+
+   def  get_router(self):
+
+       return self.__router
