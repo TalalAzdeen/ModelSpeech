@@ -7,9 +7,9 @@ isDev=True
 
 APPS=[
       (create_app(TemplateSpeechStudioBuilder,isDev),'chatbot'),
-      (create_app(TemplateTextToSpeechStudioBuilder,isDev),'t2speech'),
-      (create_app(TemplateSpacePlatformBuilder),'space'),
-      (create_app(TemplateTextToTextStudioBuilder,isDev),'t2text'),
+      (create_app(TemplateTextToSpeechStudioBuilder,isDev),'studio-t2text'),
+      (create_app(TemplateSpacePlatformBuilder),'createspace'),
+      (create_app(TemplateTextToTextStudioBuilder,isDev),'studio-t2speech'),
 
       
 ]
