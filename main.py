@@ -40,8 +40,13 @@ app = gr.mount_gradio_app(app, audio_interface.demo, path='/manger-audio')
 
 
 
+
+
 from apps.ui_apps import APPS
 for uiapp,path in APPS:
     app = gr.mount_gradio_app(app, uiapp, path="/"+path)
 
     
+from apps.api_routers import APIS
+for router,path in  APIS:
+    app.include_router(router, prefix=f"/api/{path}")
