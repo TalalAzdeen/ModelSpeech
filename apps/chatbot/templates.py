@@ -10,6 +10,7 @@ import plotly.express as px
 import time
 from typing import Optional, Text
 from .components import *
+from .chatbot.routers import *
 
 class TemplateSpeechStudioBuilder:
     def __init__(self, url, token, isDev=True, data=None) -> None:
@@ -308,8 +309,9 @@ class TemplateSpeechStudioBuilder:
 
         first_value = default_model[0] if default_model and isinstance(default_model, list) else None
         return gr.update(choices=default_model, value=first_value,visible=True)
-
-
+    
+    def createapi(self, data=None, language="en"):
+        return UserHandler(self).router
     def createapp(self, data=None, language="en"):
 
         self.msg_event = f"Creating app for language {language}"
