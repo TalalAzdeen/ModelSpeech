@@ -6,10 +6,10 @@ from .t2speech.templates  import TemplateTextToSpeechStudioBuilder
 isDev=True
 
 APPS=[
-      #(create_app(TemplateSpeechStudioBuilder,isDev),'chatbot'),
-      (create_app(TemplateTextToSpeechStudioBuilder,isDev),'TextToSpeech'),
-      #(create_app(TemplateSpacePlatformBuilder),'CreateAndUpdateSpace'),
-      #(create_app(TemplateTextToTextStudioBuilder,isDev),'TextToText'),
+      (create_app(TemplateSpeechStudioBuilder,isDev),'chatbot'),
+      (create_app(TemplateTextToSpeechStudioBuilder,isDev),'t2speech'),
+      (create_app(TemplateSpacePlatformBuilder),'space'),
+      (create_app(TemplateTextToTextStudioBuilder,isDev),'t2text'),
 
       
 ]
