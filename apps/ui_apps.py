@@ -1,8 +1,8 @@
 from AppUI import create_app
 from .chatbot.templates  import TemplateSpeechStudioBuilder
-from .CreateAndUpdateSpace.templates  import TemplateSpacePlatformBuilder
-from .TextToText.templates  import TemplateTextToTextStudioBuilder
-from .TextToSpeech.templates  import TemplateTextToSpeechStudioBuilder
+from .space.templates  import TemplateSpacePlatformBuilder
+from .t2text.templates  import TemplateTextToTextStudioBuilder
+from .t2speech.templates  import TemplateTextToSpeechStudioBuilder
 isDev=True
 
 APPS=[
