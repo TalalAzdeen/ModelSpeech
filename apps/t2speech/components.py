@@ -97,7 +97,7 @@ def createTextToSpeech(builder, lg="en"):
         #m_category=None
         current_language = lg
 
-        with gr.Blocks() as panel:
+        with gr.Column() as panel:
             with gr.Row():
                 with gr.Column(scale=1):
                     with gr.Accordion(LANGUAGES[current_language]["options"]):
@@ -164,7 +164,7 @@ def createTextToSpeech(builder, lg="en"):
 
                       chat_input = gr.MultimodalTextbox(
                           interactive=True,
-                           visible=False
+                           visible=False,
                           placeholder=LANGUAGES[current_language]["enter_message"],
                           show_label=False,
                           lines=3,
