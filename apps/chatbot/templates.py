@@ -311,7 +311,7 @@ class TemplateSpeechStudioBuilder:
         return gr.update(choices=default_model, value=first_value,visible=True)
     
     def createapi(self, data=None, language="en"):
-        return UserHandler(self).router
+        return UserHandler(self).get_router()
     def createapp(self, data=None, language="en"):
 
         self.msg_event = f"Creating app for language {language}"
