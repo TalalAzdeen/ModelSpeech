@@ -16,4 +16,4 @@ class UserHandler:
 
     def  get_router(self):
     
-           return self.__router
+           return self.router
