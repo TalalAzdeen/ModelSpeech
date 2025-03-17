@@ -1,6 +1,7 @@
+from AppUI import create_api
 
-from .chatbot.routers import *
-
-APLS=[
-  (UserHandler.router,'/user')
+from .chatbot.templates  import TemplateSpeechStudioBuilder
+isDev=True
+APIS=[
+  (create_api(TemplateSpeechStudioBuilder,isDev),'/user')
 ]
