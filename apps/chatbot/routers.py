@@ -14,6 +14,6 @@ class UserHandler:
         def get_user(user_id: int):
             return {"message": f"User {user_id}"}
 
-   def  get_router(self):
-
-       return self.__router
+    def  get_router(self):
+    
+           return self.__router
