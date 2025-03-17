@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 class UserHandler:
     def __init__(self,builder):
-        self.__router = APIRouter()
+        self.router = APIRouter()
         self.__builder=builder
     
 
