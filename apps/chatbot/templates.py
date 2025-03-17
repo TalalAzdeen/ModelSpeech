@@ -10,7 +10,7 @@ import plotly.express as px
 import time
 from typing import Optional, Text
 from .components import *
-from .chatbot.routers import *
+from .routers import *
 
 class TemplateSpeechStudioBuilder:
     def __init__(self, url, token, isDev=True, data=None) -> None:
