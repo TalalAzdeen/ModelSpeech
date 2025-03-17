@@ -3,7 +3,7 @@ from .chatbot.templates  import TemplateSpeechStudioBuilder
 from .space.templates  import TemplateSpacePlatformBuilder
 from .t2text.templates  import TemplateTextToTextStudioBuilder
 from .t2speech.templates  import TemplateTextToSpeechStudioBuilder
-isDev=True
+isDev=False
 
 APPS=[
       (create_app(TemplateSpeechStudioBuilder,isDev),'chatbot'),
