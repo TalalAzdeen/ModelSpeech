@@ -182,6 +182,8 @@ def get_web_dataurl(querys):
 
     return ds
 
+def  create_api(tamplate,isDev=True,inputs=[],outputs=[],exception=APPException()):
+         return  tamplate("","",isDev).createapi(data=[])
 
 
 def  create_app(tamplate,isDev=True,inputs=[],outputs=[],exception=APPException()):
