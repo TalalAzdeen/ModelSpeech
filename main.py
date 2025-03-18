@@ -25,7 +25,7 @@ async def redirect_to_site():
 
 
 # app = gr.mount_gradio_app(app, demo, path='/studio-t2speech')
-app = gr.mount_gradio_app(app, t2speech.demo, path='/t2speech')
+#app = gr.mount_gradio_app(app, t2speech.demo, path='/t2speech')
 
 # app = gr.mount_gradio_app(app, t2text.demo, path='/studio-t2text')
 
