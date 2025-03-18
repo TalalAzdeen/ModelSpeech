@@ -51,7 +51,7 @@ class BuilderStudioModelAiAPi:
             if not isinstance(item, dict):
                 raise ValueError("Each item in raw_data must be a dictionary.")
 
-            absolute_path = item.get('AbsolutePath', '')
+            absolute_path = item.get('absolutePath', '')
             category = item.get('category', 'General').capitalize()  # Ensure category has a default value
             if category.lower() == 'ganaral':
                 category = 'General'
