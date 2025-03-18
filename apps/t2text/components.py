@@ -190,6 +190,70 @@ def createTextToText(builder, lg="en"):
 
     except Exception as e:
         print(f"An error occurred: {e}")
+def create_t2text(builder,current_language="en"):
+    try:
+        listmodel =builder.builder.get_property("AbsolutePath")
+        if listmodel is None:
+            frist=None
+            listmodel = []
+            print(listmodel)
+
+        else:
+            frist=listmodel[0]
+        with gr.Row():
+            with gr.Column():
+                model_name = gr.Dropdown(
+                    choices=listmodel,
+                    label=LANGUAGESTEXT[current_language]["model_name"],
+                    value=frist,
+                    interactive=True
+                    
+                )
+                # text_input = gr.Textbox(
+                #     label=LANGUAGESPEECH[current_language]["enter_message"],
+                #     placeholder=LANGUAGESPEECH[current_language]["enter_message"]
+                # )
+
+                text_input = gr.MultimodalTextbox(
+                          interactive=True,
+                           visible=True,
+                          placeholder=LANGUAGESTEXT[current_language]["enter_message"],
+                          show_label=False,
+                          lines=3,
+                          max_lines=6
+                      )
+                rate_slider = gr.Slider(
+                    0.1, 1, step=0.1, value=0.8, label=LANGUAGESTEXT[current_language]["temperature"]
+                )
+                duration_slider = gr.Slider(
+                    0.1, 5, step=0.1, value=1.0, label=LANGUAGESTEXT[current_language]["max_token"]
+                )
+                streaming_toggle = gr.Checkbox(
+                            label=LANGUAGESTEXT[current_language]["streaming"],
+                            value=True
+                        )
+                #submit_button = gr.Button(LANGUAGESPEECH[current_language]["convert"])
+
+            with gr.Column():
+                html = gr.HTML(bodyicon)
+                output_text = gr.Textbox(label=LANGUAGESTEXT[current_language]["output"])
+
+            text_input.submit(
+                    builder.bot,
+                    inputs=[
+                        text_input,
+                     
+                        model_name,
+                       
+                        rate_slider,
+                        duration_slider,
+                        streaming_toggle,
+                    ],
+                    outputs=[text_input, output_text,html]
+                    )
+              
+    except Exception as e:
+        print(f"Error in create_t2text: {str(e)}")
         #print(f"Error message: {str(Builder.builder.)}"
         # هنا يمكن إضافة معالجة خطأ إضافية أو إرسال رسالة خطأ خاصة
         return None  # إعادة None في حال حدوث استثناء
