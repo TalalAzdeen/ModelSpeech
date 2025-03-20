@@ -1,4 +1,6 @@
+from .data import *
 import plotly.express as px
+
 def change_filter(service_type,data,name_type="Type"):
             if service_type == "ALL":
                 return data

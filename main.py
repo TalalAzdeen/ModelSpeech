@@ -9,7 +9,7 @@ import chatbot
 import dashboard
 import t2speechmuit
 import userspace
-from ui import dash
+ 
 import audio_interface
 app = FastAPI()
 
@@ -29,14 +29,14 @@ async def redirect_to_site():
 
 # app = gr.mount_gradio_app(app, t2text.demo, path='/studio-t2text')
 
-app = gr.mount_gradio_app(app, dash.demo, path='/dash')
+#app = gr.mount_gradio_app(app, dash.demo, path='/dash')
 
 # app = gr.mount_gradio_app(app, chatbot.demo, path='/chatbot')
-app = gr.mount_gradio_app(app, dashboard.dashboard, path='/dashboard')
+#app = gr.mount_gradio_app(app, dashboard.dashboard, path='/dashboard')
 # app = gr.mount_gradio_app(app, t2speechmuit.demo, path='/t2speechmuit')
 # app = gr.mount_gradio_app(app, userspace.app, path='/createspace')
 
-app = gr.mount_gradio_app(app, audio_interface.demo, path='/manger-audio')
+#app = gr.mount_gradio_app(app, audio_interface.demo, path='/manger-audio')
 
 
 
@@ -44,9 +44,10 @@ app = gr.mount_gradio_app(app, audio_interface.demo, path='/manger-audio')
 
 from apps.ui_apps import APPS
 for uiapp,path in APPS:
-    app = gr.mount_gradio_app(app, uiapp, path="/"+path)
+    #app = gr.mount_gradio_app(app, uiapp, path="/"+path)
+    uiapp.launch(show_error=True,share=True)
 
     
-from apps.api_routers import APIS
-for router,path in  APIS:
-    app.include_router(router, prefix=f"/api/{path}")
+# from apps.api_routers import APIS
+# for router,path in  APIS:
+#     app.include_router(router, prefix=f"/api/{path}")

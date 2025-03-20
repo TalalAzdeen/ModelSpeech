@@ -1,5 +1,5 @@
+ 
 from .data import *
-
 bodyicon = """
     <style>
       :root {
