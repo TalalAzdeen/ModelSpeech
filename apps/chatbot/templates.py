@@ -12,6 +12,7 @@ from typing import Optional, Text
 from .components import *
 from .routers import *
 
+
 class TemplateSpeechStudioBuilder:
     def __init__(self, url, token, isDev=True, data=None) -> None:
         self.msg_event = "Initialization started"
@@ -19,6 +20,7 @@ class TemplateSpeechStudioBuilder:
         self.data=data
         self.Isdiv=isDev
         self.serviceId=""
+        self.spaceid=""
 
         if isDev:
             self.builder = BuilderStudioModelAiSpeed(models_list)
@@ -60,42 +62,49 @@ class TemplateSpeechStudioBuilder:
     def handle_error(self, message, status_code):
         self.msg_event = message
         self.status_code = status_code
-        if status_code >= 200 and status_code < 300:
-            return {
-                "status": "success",
-                "message": message,
-                "status_code": status_code
-            }
-        elif  status_code >= 400 and status_code < 500:
-            self.builderRequest.send_event_request("string","string","failed")
+        print(f"status_code :{status_code}")
+        print(f"msg_event: {message}")
+        
+        result=f"status_code :{status_code},message:{message}"
+
+
+        return result 
+        # if status_code >= 200 and status_code < 300:
+        #     return {
+        #         "status": "success",
+        #         "message": message,
+        #         "status_code": status_code
+        #     }
+        # elif  status_code >= 400 and status_code < 500:
+        #     self.builderRequest.send_event_request("string","string","failed")
 
 
 
-            return {
-                "status": "error",
-                "message": message,
-                "status_code": status_code
-            }
+        #     return {
+        #         "status": "error",
+        #         "message": message,
+        #         "status_code": status_code
+        #     }
 
-        elif  status_code==602:
-            print(f"Message event: {message}")
-            print(f"Status code: {status_code}")
+        # elif  status_code==602:
+        #     print(f"Message event: {message}")
+        #     print(f"Status code: {status_code}")
 
-            return {
-                "status": "error",
-                "message": message,
-                "status_code": status_code
-            }
-        elif status_code==11.1:
-             print(f"Message event: {message}")
-             print(f"Status code: {status_code}")
-             return None
-        elif status_code==33.1:
-            return {
-                "status": "error",
-                "message": message,
-                "status_code": status_code
-            }
+        #     return {
+        #         "status": "error",
+        #         "message": message,
+        #         "status_code": status_code
+        #     }
+        # elif status_code==11.1:
+        #      print(f"Message event: {message}")
+        #      print(f"Status code: {status_code}")
+        #      return None
+        # elif status_code==33.1:
+        #     return {
+        #         "status": "error",
+        #         "message": message,
+        #         "status_code": status_code
+        #     }
 
 
 
@@ -110,6 +119,19 @@ class TemplateSpeechStudioBuilder:
              #return service_ids[0]
 
              return "serv_3daa9b9b2f3a466eb15edecb415481af"
+
+
+    def get_spaceid(self):
+         if self.Isdiv:
+            return "space_001fc819a6ae4492be877f2869a3cbd3"
+         else:
+
+             #api_data = json.loads(self.data['api'])
+             #service_ids = [api_data.get('ServiceId')]
+             #return service_ids[0]
+
+             return "space_001fc819a6ae4492be877f2869a3cbd3"
+
     
     def ask_ai(self, message):
 
@@ -122,16 +144,19 @@ class TemplateSpeechStudioBuilder:
 
         self.msg_event = "Request creation started"
 
+        if not self.serviceId or self.serviceId == "": 
 
-
-        if not self.serviceId or self.serviceId == "":
+           self.serviceId=self.get_serviceId()
+        if not self.spaceid or self.spaceid == "":
              #self.msg_event = "Invalid input: serviceId is required"
              #self.status_code = 11.1
              #return self.handle_error(self.msg_event ,self.status_code)
-             self.serviceId=self.get_serviceId()
+             self.spaceid=self.get_spaceid()
         print(f"ServiceId: {self.serviceId}")
-
-        request = self.builderRequest.Create_request(serviceId=self.serviceId)
+        print(f"spaceid: {self.spaceid}")
+       
+        
+        request = self.builderRequest.Create_request(spaceid=self.spaceid,serviceId=self.serviceId)
         
         datarquest=self.get_data_chat_txt_model(data={})
         result = ""
@@ -208,8 +233,12 @@ class TemplateSpeechStudioBuilder:
                 return self.handle_error(self.msg_event ,self.status_code)
 
         else:
-            self.msg_event = "Request creation failed"
+            
+            self.msg_event =request['details']
             self.status_code =request['status_code']
+            #print(f"status_code :{self.status_code}")
+            #print(f"msg_event: {self.msg_event}")
+
             return self.handle_error(self.msg_event ,self.status_code)
 
 
@@ -286,32 +315,50 @@ class TemplateSpeechStudioBuilder:
           if returnName is None:
                     return None
           result=self.builder.get_filter(FilterModelAI,returnName)
+          print(f"get_filter:{result}")
           return result
  
+    
     def update_languages(self, category):
 
-        self.msg_event = f"Updating languages for category {category}"
 
+
+        self.msg_event = f"Updating languages for category {category}"
         available_languages=self.get_filter(FilterModelAI(category=category),"language")
-        return gr.update(choices=available_languages, value=[], visible=True)
+        #first_value = available_languages[0] if available_languages and isinstance(available_languages, list) else None
+        if available_languages!=None:
+           
+            return gr.update(choices=available_languages, value=[], visible=True)
+        else:
+            return gr.update(choices=available_languages, value=[], visible=False)
 
     def update_dialects(self,category,language):
-
+         
         self.msg_event = f"Updating dialects for language {language}"
         available_dialects=self.get_filter(FilterModelAI(category=category,language=language),"dialect")
-
-        return gr.update(choices=available_dialects, value=[], visible=True)
-
+        if available_dialects!=None:
+            #first_value = available_dialects[0] if available_dialects and isinstance(available_dialects, list) else None
+            return gr.update(choices=available_dialects, value=[], visible=True)
+        else:
+            return gr.update(choices=available_dialects, value=[], visible=False)
     def update_models(self, category,language,dialect):
+      
         self.msg_event = f"Updating models for dialect {dialect}"
-        default_model=self.get_filter(FilterModelAI(category=category,language=language,dialect=dialect),"name")
-        self.msg_event = f"Updating models for dialect {dialect}"
-
-        first_value = default_model[0] if default_model and isinstance(default_model, list) else None
-        return gr.update(choices=default_model, value=first_value,visible=True)
-    
+        default_model=self.get_filter(FilterModelAI(category=category,language=language,dialect=dialect),"absolutePath")
+        if default_model!=None:
+                self.msg_event = f"Updating models for dialect {dialect}"
+       
+                first_value = default_model[0] if default_model and isinstance(default_model, list) else None
+                return gr.update(choices=default_model, value=first_value,visible=True)
+        else:
+                
+                return gr.update(choices=default_model, value=first_value,visible=False)   
     def createapi(self, data=None, language="en"):
+
         return UserHandler(self).get_router()
+
+
+
     def createapp(self, data=None, language="en"):
 
         self.msg_event = f"Creating app for language {language}"

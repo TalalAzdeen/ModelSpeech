@@ -2,6 +2,7 @@ from .clients import *
 from typing import List
 from .models import *
 from .seeds import  RequestDev
+from .AutoMapper import *
 
 class BuilderStudioModelAiAPi:
     def __init__(self, url: str, token: str) -> None:
@@ -21,8 +22,12 @@ class BuilderStudioModelAiAPi:
                 print(result)
 
                 if result and result.get("status") == "success"  :
-
-                    self.DataModels = self.transform_model_data(result['data'])
+                    json_data=result['data']
+                    fixed_data = fix_json_format(json_data)
+                    data_model = DataDynamicModel(fixed_data)
+                    transformed_data = data_model.transform_model_data()
+                    self.DataModels = transformed_data
+                    #self.DataModels = self.transform_model_data(result['data'])
                 else:
                    #raise ValueError("No data returned from API.")
                    error=result.get("message")
@@ -47,6 +52,8 @@ class BuilderStudioModelAiAPi:
             raise ValueError("Invalid data format: raw_data should be a list of dictionaries.")
 
         transformed_list = []
+
+        
         for item in raw_data:
             if not isinstance(item, dict):
                 raise ValueError("Each item in raw_data must be a dictionary.")
@@ -156,7 +163,7 @@ class TemplateBuilderRequest:
 
 
 
-    def Create_request(self, value="string", serviceId="serv_3daa9b9b2f3a466eb15edecb415481af"):
+    def Create_request(self, value="string",spaceid="", serviceId=""):
           """  Create a request and handle all possible return states, with input validation"""
 
 
@@ -167,6 +174,12 @@ class TemplateBuilderRequest:
               }
 
 
+          if not isinstance(spaceid, str) or not spaceid.strip():
+              return {
+                  "status": "failed",
+                  "message": "Invalid spaceid: Must be a non-empty string."
+              }
+
           if not isinstance(serviceId, str) or not serviceId.strip():
               return {
                   "status": "failed",
@@ -174,7 +187,9 @@ class TemplateBuilderRequest:
               }
 
           data = {
+
               "value": value.strip(),
+               "spaceId":spaceid.strip(),
               "serviceId": serviceId.strip()
                }
 

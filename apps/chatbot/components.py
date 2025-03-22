@@ -98,7 +98,7 @@ def createchat(builder, lg="en"):
                         category_dropdown = gr.Dropdown(
                             choices=m_category,
                             label=LANGUAGES[current_language]["category"],
-                            value=[],
+                            value=m_category[0],
                             info=LANGUAGES[current_language]["choose_category"]
 
                         )
