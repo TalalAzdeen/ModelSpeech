@@ -32,7 +32,7 @@ class FilterModelAI(BaseModel):
     gender: Optional[str] = None
     dialect: Optional[str] = None
     Type: Optional[str] = None
-    class UserHandler:
+class UserHandler:
     def __init__(self, builder):
         self.router = APIRouter()
         self.__builder = builder
