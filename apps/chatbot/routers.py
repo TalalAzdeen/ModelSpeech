@@ -69,8 +69,8 @@ class UserHandler:
             print(f"get_filter: {result}")
             return result
         @self.router.get("/filter-options")
-        def get_filter_options(category: Optional[str] = None):
-            return self.__builder.update_languages_api(category)
+        def get_filter_options(category:str):
+            return self.__builder.update_languages_api("ganaral")
                  
             
 
