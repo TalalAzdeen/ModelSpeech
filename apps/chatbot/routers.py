@@ -55,9 +55,17 @@ class UserHandler:
             return self.__builder.generate_audio(token, message)
 
         @self.router.post("/filter")
-        def get_filter(filter_data: FilterModelAI):
-            return {"filtered_data": filter_data.dict()}
+        def get_filter(filter_data: FilterModelAI, return_name: str):
+            # التحقق إذا كانت البيانات فارغة أو غير محددة
+            if not filter_data:
+                return {"error": "Invalid filter data"}
 
+            if not return_name:
+                return {"error": "Return name is required"}
+
+            result = self.__builder.get_filter(filter_data, return_name)
+            print(f"get_filter: {result}")
+            return result
         @self.router.get("/filter-options")
         def get_filter_options(category: Optional[str] = None):
             return self.__builder.get_filter(FilterModelAI(category=category), "language")
