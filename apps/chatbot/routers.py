@@ -59,12 +59,10 @@ class UserHandler:
             return {"filtered_data": filter_data.dict()}
 
         @self.router.get("/filter-options")
-        def get_filter_options(category: Optional[str] = None, language: Optional[str] = None, dialect: Optional[str] = None):
-            return {
-                "languages": self.__builder.get_filter(FilterModelAI(category=category), "language"),
-                "dialects": self.__builder.get_filter(FilterModelAI(category=category, language=language), "dialect"),
-                "models": self.__builder.get_filter(FilterModelAI(category=category, language=language, dialect=dialect), "absolutePath"),
-            }
+        def get_filter_options(category: Optional[str] = None):
+            return self.__builder.get_filter(FilterModelAI(category=category), "language")
+                 
+            
 
     def get_router(self):
         return self.router
