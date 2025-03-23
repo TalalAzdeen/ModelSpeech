@@ -32,6 +32,8 @@ class FilterModelAI(BaseModel):
     gender: Optional[str] = None
     dialect: Optional[str] = None
     Type: Optional[str] = None
+
+
 class UserHandler:
     def __init__(self, builder):
         self.router = APIRouter()
@@ -68,7 +70,7 @@ class UserHandler:
             return result
         @self.router.get("/filter-options")
         def get_filter_options(category: Optional[str] = None):
-            return self.__builder.get_filter(FilterModelAI(category=category), "language")
+            return self.__builder.get_filter(FilterModelAI(category=category),"language")
                  
             
 
