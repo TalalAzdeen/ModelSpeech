@@ -326,7 +326,12 @@ class TemplateSpeechStudioBuilder:
           print(f"get_filter:{result}")
           return result
  
-    
+    def update_languages_api(self, category):
+        self.msg_event = f"Updating languages for category {category}"
+        available_languages=self.get_filter(FilterModelAI(category=category),"language")
+        return available_languages
+        
+
     def update_languages(self, category):
 
 
