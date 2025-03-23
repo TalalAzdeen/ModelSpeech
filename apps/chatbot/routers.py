@@ -70,7 +70,7 @@ class UserHandler:
             return result
         @self.router.get("/filter-options")
         def get_filter_options(category: Optional[str] = None):
-            return self.__builder.get_filter(FilterModelAI(category=category),"language")
+            return self.__builder.update_languages_api(category)
                  
             
 
