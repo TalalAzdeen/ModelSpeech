@@ -3,6 +3,8 @@ from .seeds import *
 
 from .builders import *
 import gradio as gr
+from apps.base.builders import BuilderRequest
+ 
 from gradio_client import Client
 import pandas as pd
 from random import randint
@@ -11,6 +13,11 @@ import time
 from typing import Optional, Text
 from .components import *
 from .routers import *
+
+
+
+
+
 
 
 class TemplateSpeechStudioBuilder:
@@ -24,14 +31,14 @@ class TemplateSpeechStudioBuilder:
 
         if isDev:
             self.builder = BuilderStudioModelAiSpeed(models_list)
-            self.builderRequest = TemplateBuilderRequest(url, token, True)
+            self.builderRequest =BuilderRequest(url, token, True)
             self.msg_event = "Development environment initialized"
 
 
         else:
 
             self.builder = BuilderStudioModelAiAPi(url,token)
-            self.builderRequest = TemplateBuilderRequest(url, token, False)
+            self.builderRequest =BuilderRequest(url, token, False)
             self.msg_event = "api  environment initialized"
 
 
@@ -155,9 +162,10 @@ class TemplateSpeechStudioBuilder:
         print(f"ServiceId: {self.serviceId}")
         print(f"spaceid: {self.spaceid}")
        
-        
-        request = self.builderRequest.Create_request(spaceid=self.spaceid,serviceId=self.serviceId)
-        
+        #print (self.data)
+        request=self.builderRequest.send_create_request_quary(self.data)
+        #request = self.builderRequest.Create_request(spaceid=self.spaceid,serviceId=self.serviceId)
+        #self.builderRequest.send_event_request_quary(self.data)
         datarquest=self.get_data_chat_txt_model(data={})
         result = ""
         print(f"Request : {request}")
@@ -197,13 +205,17 @@ class TemplateSpeechStudioBuilder:
                     print(f"result: {result}")
                     self.msg_event = "predict completed successfully"
                     self.status_code = 222
-                    event_id=request["data"]["eventId"]
+                    #event_id=request["data"]["eventId"]
                      
-                    status=request["status"]
+                    #status=request["status"]
 
 
 
-                    result_request=self.builderRequest.send_event_request(event_id,result,status)
+                    #result_request=self.builderRequest.send_event_request(event_id,result,status)
+
+
+                    result_request=self.builderRequest.send_event_request_quary(self.data,request,result,self.status_code)
+
                     print(f"result: {result_request}")
                     if result_request and result_request["status"]=="success":
                         self.msg_event = "predict completed successfully"
@@ -234,17 +246,13 @@ class TemplateSpeechStudioBuilder:
 
         else:
             
-            self.msg_event =request['details']
+            self.msg_event =request['message']
             self.status_code =request['status_code']
-            #print(f"status_code :{self.status_code}")
-            #print(f"msg_event: {self.msg_event}")
-
+           
             return self.handle_error(self.msg_event ,self.status_code)
 
 
-        #print(f"Event Status: {self.msg_event}")
-        #print(f"Status code: {self.status_code}")
-
+        
 
 
 
@@ -352,7 +360,10 @@ class TemplateSpeechStudioBuilder:
                 return gr.update(choices=default_model, value=first_value,visible=True)
         else:
                 
-                return gr.update(choices=default_model, value=first_value,visible=False)   
+                return gr.update(choices=default_model, value=first_value,visible=False)
+
+                
+                   
     def createapi(self, data=None, language="en"):
 
         return UserHandler(self).get_router()
@@ -364,6 +375,7 @@ class TemplateSpeechStudioBuilder:
         self.msg_event = f"Creating app for language {language}"
         print(self.msg_event )
         self.data = data
+        print(data)
         with gr.Column() as service_dashboard:
             createchat(self)
             #print(data)
