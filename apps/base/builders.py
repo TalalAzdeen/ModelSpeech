@@ -5,6 +5,7 @@ from .DataDynamicModel import *
 class BuilderRequest:
     def __init__(self, Url, Token, IsDev=True, max_dev_requests=2):
         """  Initialize the request builder with API or dev mode"""
+        self.isdiv=IsDev
         if IsDev:
             self.builder = RequestDev(max_dev_requests)
         else:
@@ -45,40 +46,42 @@ class BuilderRequest:
   
     def send_create_request_quary(self,quary):
         
-        data=quary['api']
-        
+        if self.isdiv==False:
+              data=quary['api']
+              dynamic_model_instance =DataDynamicModel(data).convert_to_dynamic_model()
+              print(f"DataDynamicModel{dynamic_model_instance}")
+              #if dynamic_model_instance.Spaces==None
+              return self.Create_request(
+                value="string",
+                spaceid="space_001fc819a6ae4492be877f2869a3cbd3",
+                serviceId=dynamic_model_instance.SubscriptionId
 
-     
-            
-
-       
               
             
-        dynamic_model_instance = DataDynamicModel(data).convert_to_dynamic_model()
-           
-        print(f"DataDynamicModel{dynamic_model_instance}")
-        #if dynamic_model_instance.Spaces==None
+              )
+        else:
+            return self.Create_request(
+                value="string",
+                spaceid="space_001fc819a6ae4492be877f2869a3cbd3",
+                serviceId="dynamic_model_instance.SubscriptionId"
 
-
-
-        return self.Create_request(
-           value="string",
-           spaceid="space_001fc819a6ae4492be877f2869a3cbd3",
-           serviceId=dynamic_model_instance.SubscriptionId
-
-        
-      
-        )
-    
+              
+            
+              )
         
         
  
     def send_event_request_quary(self,data,request,result,status_code):
-         
-           event_id=request["data"]["eventId"]
-                     
-           status=request["status"]
-           return self.send_event_request(event_id,result,status)
+           
+           if self.isdiv:
+                event_id=request["data"]["eventId"]   
+                status=request["status"]
+                return self.send_event_request(event_id,result,status)
+           else:
+               
+                event_id="space_001fc819a6ae4492be877f2869a3cbd3"  
+                status="fffffff"
+                return self.send_event_request(event_id,result,"rrrr")
 
 
 

@@ -76,18 +76,29 @@ from gradio_client import Client
 import pandas as pd
 from random import randint
 import plotly.express as px
+from .models import *
+
 import time
-from typing import Optional
+
+from typing import Optional, Type
+
 
 def createchat(builder, lg="en"):
     try:
-        print(f"Creating chat")
-        #m_category=builder.get_filter(FilterModelAI(type="Chat"),"category")
 
-        m_category = builder.builder.get_property("category")
-        if m_category is None:
-            m_category = []
-         
+        print(f"Creating chat")
+
+        m_category=[]
+        fist_categary=[]
+        type_server_pige="Chat"
+        if builder.Isdiv==False:
+            m_category=builder.get_filter(FilterModelAI(Type=type_server_pige),"category")
+        else:
+
+            m_category = builder.builder.get_property("category")
+            
+        if m_category !=None:
+           fist_categary=m_category[0]
         #m_category=None
         current_language = lg
 
@@ -98,7 +109,7 @@ def createchat(builder, lg="en"):
                         category_dropdown = gr.Dropdown(
                             choices=m_category,
                             label=LANGUAGES[current_language]["category"],
-                            value=m_category[0],
+                            value=fist_categary,
                             info=LANGUAGES[current_language]["choose_category"]
 
                         )
@@ -128,14 +139,14 @@ def createchat(builder, lg="en"):
                     with gr.Accordion(LANGUAGES[current_language]["settings"]):
                         temperature_slider = gr.Slider(
                             label=LANGUAGES[current_language]["temperature"],
-                            minimum=0.1, maximum=5, step=0.1, value=0.7
+                            minimum=0.1, maximum=5, step=0.1, value=0.7,interactive=True
                         )
                         speech_rate_slider = gr.Slider(
                             label=LANGUAGES[current_language]["max_token"],
-                            minimum=50, maximum=120000, step=50, value=1024
+                            minimum=50, maximum=120000, step=50, value=1024,interactive=True
                         )
                         streaming_toggle = gr.Checkbox(
-                            label=LANGUAGES[current_language]["streaming"],
+                            label=LANGUAGES[current_language]["streaming"],interactive=True,
                             value=True
                         )
 

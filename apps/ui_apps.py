@@ -6,6 +6,7 @@ from .t2text.templates  import TemplateTextToTextStudioBuilder,TemplateTextToTex
 from .t2speech.templates  import TemplateTextToSpeechStudioBuilder,TemplateTextToSpeechBuilder
 isDev=False
 
+
 APPS=[
       #(create_app(TamplateDashBuilder,isDev),'dashboard'),
       (create_app(TemplateSpeechStudioBuilder,isDev),'chatbot'),

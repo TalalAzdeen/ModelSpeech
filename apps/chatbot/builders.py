@@ -1,7 +1,7 @@
 from .clients import *
 from typing import List
 from .models import *
-from .seeds import  RequestDev
+ 
 from .AutoMapper import *
 
 class BuilderStudioModelAiAPi:
@@ -17,7 +17,17 @@ class BuilderStudioModelAiAPi:
 
         if not self.DataModels:
             try:
-                result = self.Builder.get_filtered_models()
+                payload ={
+                        "name": FilterModelAI.name if FilterModelAI.name else None,
+                        "category": FilterModelAI.category if FilterModelAI.category else None,
+                        "language": FilterModelAI.category.language if FilterModelAI.category and FilterModelAI.category.language else None,
+                        "isStandard": FilterModelAI.category.isStandard if FilterModelAI.category and FilterModelAI.category.isStandard else None,
+                        "gender": FilterModelAI.category.gender if FilterModelAI.category and FilterModelAI.category.gender else None,
+                        "dialect": FilterModelAI.category.dialect if FilterModelAI.category and FilterModelAI.category.dialect else None,
+                        "type": FilterModelAI.category.Type if FilterModelAI.category and FilterModelAI.category.Type else None
+                    }
+
+                result = self.Builder.get_filtered_models(payload)
                 
                 print(result)
 
@@ -25,6 +35,7 @@ class BuilderStudioModelAiAPi:
                     json_data=result['data']
                     fixed_data = fix_json_format(json_data)
                     data_model = DataDynamicModel(fixed_data)
+
                     transformed_data = data_model.transform_model_data()
                     self.DataModels = transformed_data
                     #self.DataModels = self.transform_model_data(result['data'])

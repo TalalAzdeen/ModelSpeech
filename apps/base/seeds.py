@@ -3,7 +3,10 @@ class RequestDev:
         """  Simulate requests in development mode"""
         self.max_requests = max_requests
         self.request_count = 0
+
+
     def  send_event_request(self,data):
+      
          return  None
     def send_event_request(self, eventId, status, message):
         """Send an event request to the API"""

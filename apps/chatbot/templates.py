@@ -5,7 +5,7 @@ from .builders import *
 import gradio as gr
 from apps.base.builders import BuilderRequest
  
-from gradio_client import Client
+from gradio_client import Client, exceptions
 import pandas as pd
 from random import randint
 import plotly.express as px
@@ -51,6 +51,8 @@ class TemplateSpeechStudioBuilder:
 
         print(f"Message event: {self.msg_event}")
         print(f"Status code: {self.status_code}")
+
+
     def get_data_chat_txt_model(self,data=[]):
        
            
@@ -65,7 +67,14 @@ class TemplateSpeechStudioBuilder:
             }
             return model_info
          
-         
+
+
+
+    def execute_redirect(data, url=None, user_input=None):
+
+            print("ee")
+           
+
     def handle_error(self, message, status_code):
         self.msg_event = message
         self.status_code = status_code
@@ -76,187 +85,213 @@ class TemplateSpeechStudioBuilder:
 
 
         return result 
-        # if status_code >= 200 and status_code < 300:
-        #     return {
-        #         "status": "success",
-        #         "message": message,
-        #         "status_code": status_code
-        #     }
-        # elif  status_code >= 400 and status_code < 500:
-        #     self.builderRequest.send_event_request("string","string","failed")
-
-
-
-        #     return {
-        #         "status": "error",
-        #         "message": message,
-        #         "status_code": status_code
-        #     }
-
-        # elif  status_code==602:
-        #     print(f"Message event: {message}")
-        #     print(f"Status code: {status_code}")
-
-        #     return {
-        #         "status": "error",
-        #         "message": message,
-        #         "status_code": status_code
-        #     }
-        # elif status_code==11.1:
-        #      print(f"Message event: {message}")
-        #      print(f"Status code: {status_code}")
-        #      return None
-        # elif status_code==33.1:
-        #     return {
-        #         "status": "error",
-        #         "message": message,
-        #         "status_code": status_code
-        #     }
-
-
-
-
-    def get_serviceId(self):
-         if self.Isdiv:
-            return "serv_3daa9b9b2f3a466eb15edecb415481af"
-         else:
-
-             #api_data = json.loads(self.data['api'])
-             #service_ids = [api_data.get('ServiceId')]
-             #return service_ids[0]
-
-             return "serv_3daa9b9b2f3a466eb15edecb415481af"
-
-
-    def get_spaceid(self):
-         if self.Isdiv:
-            return "space_001fc819a6ae4492be877f2869a3cbd3"
-         else:
-
-             #api_data = json.loads(self.data['api'])
-             #service_ids = [api_data.get('ServiceId')]
-             #return service_ids[0]
-
-             return "space_001fc819a6ae4492be877f2869a3cbd3"
-
-    
-    def ask_ai(self, message):
-
-        if not message or message == "":
-
-              self.msg_event = "Invalid input: Message is required"
-              self.status_code = 11.1
-              return self.handle_error(self.msg_event ,self.status_code)
-
-
-        self.msg_event = "Request creation started"
-
-        if not self.serviceId or self.serviceId == "": 
-
-           self.serviceId=self.get_serviceId()
-        if not self.spaceid or self.spaceid == "":
-             #self.msg_event = "Invalid input: serviceId is required"
-             #self.status_code = 11.1
-             #return self.handle_error(self.msg_event ,self.status_code)
-             self.spaceid=self.get_spaceid()
-        print(f"ServiceId: {self.serviceId}")
-        print(f"spaceid: {self.spaceid}")
        
-        #print (self.data)
-        request=self.builderRequest.send_create_request_quary(self.data)
-        #request = self.builderRequest.Create_request(spaceid=self.spaceid,serviceId=self.serviceId)
-        #self.builderRequest.send_event_request_quary(self.data)
-        datarquest=self.get_data_chat_txt_model(data={})
-        result = ""
-        print(f"Request : {request}")
-        print(f"msg_event: {self.builderRequest.msg_event}")
+
+
+    def error_event_handler(self, e, function_name=""):
+ 
+   
+          error_message = f"Error in {function_name}: {str(e)}"
+          print(f"Error Message:{error_message}")
+          
+          
+          return {
+              "status": "error",
+              "message": error_message,
+              "status_code": 500
+          }
 
 
 
-        if  request and request.get("status") == "success" and request.get("data")  :
-            try:
-                
-                if self.client is None:
+    def initialize_client(self, modelAi="",token="",service="",message=""):
 
-                    self.client = Client(datarquest['modelAi'])
-                    self.msg_event = "Client initialized successfully"
-                    self.status_code = 22.2
-            except Exception as e:
 
-                self.msg_event = f"Error initializing client: {e}"
-                self.status_code = 22.3
-                print(f"Error initializing client: {e}")
-                self.client = Client(datarquest['modelAi'])
+        try:
+            if self.client is None:
+                self.client = Client(modelAi)
 
-                #self.handle_error(f"Error initializing client: {e}", 22.3)
-
-            try:
-
+        except Exception as e:
+                self.client = Client(modelAi)
+        
+        try:
+          
                 result = self.client.predict(
-                    #key=request["data"]["token"]
-                    #api_name=request["data"]["service"]
                     text=message,
-                    key=datarquest['token'],
-                    api_name=datarquest['service']
+                    key=token,
+                    api_name=service
                 )
-
-
-                if result!=None:
-                    print(f"result: {result}")
-                    self.msg_event = "predict completed successfully"
-                    self.status_code = 222
-                    #event_id=request["data"]["eventId"]
-                     
-                    #status=request["status"]
+                return result
+        except Exception as e:
+                     return None
+                #return self.error_event_handler(e, function_name="initialize_client")
+                
 
 
 
-                    #result_request=self.builderRequest.send_event_request(event_id,result,status)
-
-
-                    result_request=self.builderRequest.send_event_request_quary(self.data,request,result,self.status_code)
-
-                    print(f"result: {result_request}")
-                    if result_request and result_request["status"]=="success":
-                        self.msg_event = "predict completed successfully"
-                        print(f"msg_event: {self.msg_event}")
-                        print(self.msg_event)
-
-                    else:
-                        self.msg_event = "result send event request   None"
-                        self.status_code =result_request['status_code']
-                        print(f"msg_event: {self.msg_event}")
-                        print(self.msg_event)
-                        if self.Isdiv==False:
-                          
-                              return self.handle_error(self.msg_event ,self.status_code)
-
-
-                else:
-                    self.msg_event = "result client predict None"
-                    self.status_code =11.2
-                    print(self.msg_event)
-                    return self.handle_error(self.msg_event ,self.status_code)
-            except Exception as e:
-
-                self.msg_event = f"Error during prediction: {e}"
-                self.status_code = 224
-                print(f"Error during prediction: {e}")
-                return self.handle_error(self.msg_event ,self.status_code)
-
-        else:
+                 
+    def validate_input(self, message):
             
-            self.msg_event =request['message']
-            self.status_code =request['status_code']
+            
+
+              if not message or message.strip() == "":
+                 
+                  return False
+              return True
+
+
+              
+    def send_request(self,data):
+    
+        try:
+
+            request = self.builderRequest.send_create_request_quary(data)
+            return request
+        except Exception as e:
+            
+            return self.error_event_handler(e, function_name="send_request")
+
+    def send_event_request(self,data,request,result,status_code):
+      
+        try:
+
+
+            result_request = self.builderRequest.send_event_request_quary(data, request, result,status_code)
+            return result_request
+        except Exception as e:
+              return self.error_event_handler(e, function_name="send_event_request")
+
+
+
+
+    def ask_ai(self, message,model=""):
+      try:
+            if not self.validate_input(message):
+
+                  self.msg_event = "Invalid input: Message is required"
+                  self.status_code = 11.1
+                  return self.handle_error(self.msg_event ,self.status_code)
+            self.msg_event = "Request creation started"
+            request=self.send_request(self.data)
+            datarquest=self.get_data_chat_txt_model(data={})
+            result = ""
+            print(f"Request : {request}")
+            print(f"msg_event: {self.builderRequest.msg_event}")
+            if  request and request.get("status") == "success" and request.get("data")  :
+              
+              
+                    modelAi=datarquest['modelAi'] 
+                    key=datarquest['token']
+
+                    api_name=datarquest['service']
+                    result=self.initialize_client(modelAi=modelAi,token=key,service=api_name,message=message)
+                    if result!=None:
+                        print(f"result: {result}")
+                        result_request=self.send_event_request(self.data,request,result,self.status_code)
+                        print(f"result_send_event_request: {result_request}")
+                        if result_request and result_request["status"]=="success":
+                          self.msg_event = "predict completed successfully"
+                          print(f"msg_event: {self.msg_event}")
+                        else:
+
+                            self.msg_event = "result send event request   None"
+                            self.status_code =result_request['status_code']
+                            print(f"msg_event: {self.msg_event}")
+                            if self.Isdiv==False:
+                               
+                                  return self.handle_error(self.msg_event ,self.status_code)
+            else:
+
+                self.msg_event =request['message']
+                self.status_code =request['status_code']
+                return self.handle_error(self.msg_event ,self.status_code)
+            return result
+
+      except Exception as e:
+          
+                return self.error_event_handler(e, function_name="ask_ai")
+
+
+        #         if self.client is None:
+
+        #             self.client = Client(datarquest['modelAi'])
+        #             self.msg_event = "Client initialized successfully"
+        #             self.status_code = 22.2
+        #     except Exception as e:
+
+        #         self.msg_event = f"Error initializing client: {e}"
+        #         self.status_code = 22.3
+        #         print(f"Error initializing client: {e}")
+        #         self.client = Client(datarquest['modelAi'])
+
+        #         #self.handle_error(f"Error initializing client: {e}", 22.3)
+
+        #     try:
+
+        #         result = self.client.predict(
+        #             #key=request["data"]["token"]
+        #             #api_name=request["data"]["service"]
+        #             text=message,
+        #             key=datarquest['token'],
+        #             api_name=datarquest['service']
+        #         )
+
+
+        #         if result!=None:
+        #             print(f"result: {result}")
+        #             self.msg_event = "predict completed successfully"
+        #             self.status_code = 222
+        #             #event_id=request["data"]["eventId"]
+                     
+        #             #status=request["status"]
+
+
+
+        #             #result_request=self.builderRequest.send_event_request(event_id,result,status)
+
+
+        #             result_request=self.send_event_request(self.data,request,result,self.status_code)
+
+        #             print(f"result: {result_request}")
+        #             if result_request and result_request["status"]=="success":
+        #                 self.msg_event = "predict completed successfully"
+        #                 print(f"msg_event: {self.msg_event}")
+        #                 print(self.msg_event)
+
+        #             else:
+        #                 self.msg_event = "result send event request   None"
+        #                 self.status_code =result_request['status_code']
+        #                 print(f"msg_event: {self.msg_event}")
+        #                 print(self.msg_event)
+        #                 if self.Isdiv==False:
+                          
+        #                       return self.handle_error(self.msg_event ,self.status_code)
+
+
+        #         else:
+        #             self.msg_event = "result client predict None"
+        #             self.status_code =11.2
+        #             print(self.msg_event)
+        #             return self.handle_error(self.msg_event ,self.status_code)
+        #     except Exception as e:
+
+        #         self.msg_event = f"Error during prediction: {e}"
+        #         self.status_code = 224
+        #         print(f"Error during prediction: {e}")
+        #         return self.handle_error(self.msg_event ,self.status_code)
+
+        # else:
+            
+        #     self.msg_event =request['message']
+        #     self.status_code =request['status_code']
            
-            return self.handle_error(self.msg_event ,self.status_code)
+        #     return self.handle_error(self.msg_event ,self.status_code)
 
 
         
 
 
 
-        return result
+        # return result
 
 
 
@@ -267,6 +302,7 @@ class TemplateSpeechStudioBuilder:
         self.msg_event = "Audio generation started"
         self.status_code = 222
         try:
+
             client = Client("wasmdashai/RunTasking")
             result = client.predict(
                 text=message,
@@ -296,7 +332,7 @@ class TemplateSpeechStudioBuilder:
             history.append({"role": "user", "content": message["text"]})
         return history, gr.MultimodalTextbox(value=None, interactive=False)
 
-    def bot(self, history: list):
+    def bot(self, history: list,model=""):
 
         self.msg_event = "Bot response generation started"
         message = history[-1]["content"]
@@ -310,6 +346,7 @@ class TemplateSpeechStudioBuilder:
             history[-1]["content"] += character
             time.sleep(0.05)
             yield history
+
 
     def print_like_dislike(self, x: gr.LikeData, history):
         self.msg_event = f"Like/Dislike event triggered for index {x.index}"
@@ -332,30 +369,62 @@ class TemplateSpeechStudioBuilder:
         return available_languages
         
 
-    def update_languages(self, category):
+    # def update_languages(self, category):
 
 
 
-        self.msg_event = f"Updating languages for category {category}"
-        available_languages=self.get_filter(FilterModelAI(category=category),"language")
-        #first_value = available_languages[0] if available_languages and isinstance(available_languages, list) else None
-        if available_languages!=None:
+    #     self.msg_event = f"Updating languages for category {category}"
+    #     available_languages=self.get_filter(FilterModelAI(category=category),"language")
+    #     #first_value = available_languages[0] if available_languages and isinstance(available_languages, list) else None
+    #     if available_languages!=None:
            
-            return gr.update(choices=available_languages, value=[], visible=True)
-        else:
-            return gr.update(choices=available_languages, value=[], visible=False)
+    #         return gr.update(choices=available_languages, value=[], visible=True)
+    #     else:
+    #         return gr.update(choices=available_languages, value=[], visible=False)
+    def update_languages(self, category):
+   
+            if not isinstance(category, str) or not category.strip():
+                 
+               return gr.update(choices=[], value=[], visible=False)
+         
+            available_languages = self.get_filter(FilterModelAI(category=category), "language")
+            
+            if available_languages is not None and isinstance(available_languages, list):
+                return gr.update(choices=available_languages, value=[], visible=True)
+            else:
+                return gr.update(choices=[], value=[], visible=False)  # إذا كانت القائمة فارغة أو غير موجودة
+
 
     def update_dialects(self,category,language):
-         
+        
+            
+        if not isinstance(category, str) or not category.strip()  :
+                 
+               return gr.update(choices=[], value=[], visible=False)
+        
+        if not isinstance(language, str) or not language.strip():
+               return gr.update(choices=[], value=[], visible=False)
+
+
+
         self.msg_event = f"Updating dialects for language {language}"
         available_dialects=self.get_filter(FilterModelAI(category=category,language=language),"dialect")
         if available_dialects!=None:
             #first_value = available_dialects[0] if available_dialects and isinstance(available_dialects, list) else None
             return gr.update(choices=available_dialects, value=[], visible=True)
         else:
-            return gr.update(choices=available_dialects, value=[], visible=False)
+            return gr.update(choices=[], value=[], visible=False)
+
     def update_models(self, category,language,dialect):
       
+        if not isinstance(language, str) or not language.strip():
+               return gr.update(choices=[], value=[], visible=False)
+        if not isinstance(category, str) or not category.strip()  :
+                 
+               return gr.update(choices=[], value=[], visible=False)
+        if not isinstance(dialect, str) or not dialect.strip()  :
+                 
+               return gr.update(choices=[], value=[], visible=False)
         self.msg_event = f"Updating models for dialect {dialect}"
         default_model=self.get_filter(FilterModelAI(category=category,language=language,dialect=dialect),"absolutePath")
         if default_model!=None:
@@ -365,7 +434,7 @@ class TemplateSpeechStudioBuilder:
                 return gr.update(choices=default_model, value=first_value,visible=True)
         else:
                 
-                return gr.update(choices=default_model, value=first_value,visible=False)
+                return gr.update(choices=[], value=[],visible=False)
 
                 
                    
