@@ -68,9 +68,9 @@ class UserHandler:
         def send_event_request(data: dict, request: dict, result: dict, status_code: int):
             return self.__builder.send_event_request(data, request, result, status_code)
 
-        @self.router.post("/error-event-handler")
-        def error_event_handler(e: Exception, function_name: str = ""):
-            return self.__builder.error_event_handler(e, function_name)
+        # @self.router.post("/error-event-handler")
+        # def error_event_handler(e: Exception, function_name: str = ""):
+        #     return self.__builder.error_event_handler(e, function_name)
         @self.router.post("/handle_error")
         def handle_error(message: str, status_code: int):
             return self.__builder.handle_error(message, status_code)
