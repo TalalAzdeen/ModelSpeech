@@ -296,7 +296,7 @@ class TemplateSpacePlatformBuilder:
             print(f"Initialized with {'SpaceDev' if is_dev else 'SpaceAPI'}.")
 
         except Exception as e:
-            self._raise_error(f"Error during initialization: {str(e)}", 500)
+            self.handle_error(f"Error during initialization: {str(e)}", 500)
 
 
 
