@@ -289,7 +289,7 @@ class TemplateSpacePlatformBuilder:
 
         if not url or not token:
 
-            self._raise_error("URL and Token must be provided.", 11.1)
+            self.handle_error("URL and Token must be provided.", 11.1)
 
         try:
             self.builder = SpaceDev(token) if is_dev else builderSpace(url, token)
