@@ -8,9 +8,13 @@ isDev=False
 
 
 APPS=[
-      #(create_app(TamplateDashBuilder,isDev),'dashboard'),
-      (create_app(TemplateSpacePlatformBuilder,isDev),'createspace'),
-      (create_app(TemplateSpeechStudioBuilder,isDev),'chatbot'),
+
+    (create_app(TemplateSpacePlatformBuilder,isDev),'createspace'),
+    (create_app(TamplateDashBuilder,isDev),'dashboard'),
+     (create_app(TemplateSpeechStudioBuilder,isDev),'chatbot'),
+    
+      
+    
       (create_app(TemplateTextToSpeechStudioBuilder,isDev),'studio-t2text'),
       #(create_app(TemplateSpacePlatformBuilder,isDev),'createspace'),
       (create_app(TemplateTextToTextStudioBuilder,isDev),'studio-t2speech'),

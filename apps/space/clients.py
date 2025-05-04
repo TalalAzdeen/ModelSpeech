@@ -14,7 +14,7 @@ class SpaceAPI:
     def get_spaces(self):
         """ Fetch all spaces """
         try:
-            url = f"{self.base_url}/api/Space"
+            url = f"{self.base_url}/api/v1/user/Space"
             response = requests.get(url, headers=self.headers)
 
             return self._handle_response(response)
@@ -26,7 +26,7 @@ class SpaceAPI:
     def get_data_space_by_id(self, space_id):
         """ Fetch a single space by ID """
         try:
-            url = f"{self.base_url}/api/Space/{space_id}"
+            url = f"{self.base_url}/api/v1/user/Space/{space_id}"
             response = requests.get(url, headers=self.headers)
 
             return self._handle_response(response)
@@ -38,7 +38,7 @@ class SpaceAPI:
     def create_space(self, data):
         """ Create a new space """
         try:
-            url = f"{self.base_url}/api/Space"
+            url = f"{self.base_url}/api/v1/user/Space"
             response = requests.post(url, json=data, headers=self.headers)
 
             return self._handle_response(response)
@@ -50,7 +50,7 @@ class SpaceAPI:
     def update_space(self, space_id, data):
         """ Update space data """
         try:
-            url = f"{self.base_url}/api/Space/{space_id}"
+            url = f"{self.base_url}/api/v1/user/Space/{space_id}"
             response = requests.put(url, json=data, headers=self.headers)
 
             return self._handle_response(response)
@@ -62,7 +62,7 @@ class SpaceAPI:
     def delete_space(self, space_id):
         """ Delete a space """
         try:
-            url = f"{self.base_url}/api/Space/{space_id}"
+            url = f"{self.base_url}/api/v1/user/Space/{space_id}"
             response = requests.delete(url, headers=self.headers)
 
             return self._handle_response(response)

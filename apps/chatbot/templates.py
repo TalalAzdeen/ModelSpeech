@@ -1,9 +1,8 @@
 
 from .seeds import *
-
-from .builders import *
+# from .builders import *
 import gradio as gr
-from apps.base.builders import BuilderRequest
+from apps.base.builders import BuilderStudioModelAiAPi
  
 from gradio_client import Client, exceptions
 import pandas as pd
@@ -12,6 +11,7 @@ import plotly.express as px
 import time
 from typing import Optional, Text
 from .components import *
+from apps.base.builders import BuilderRequest
 from .routers import *
 
 

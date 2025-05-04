@@ -1,106 +1,95 @@
-from .clients import *
-from typing import List
-from .models import *
+# from .clients import *
+# from typing import List
+# from .models import *
  
-from .AutoMapper import *
+# from .AutoMapper import *
 
-class BuilderStudioModelAiAPi:
-    def __init__(self, url: str, token: str) -> None:
-        if not url or not token:
-            raise ValueError("URL and Token must be provided.")
-        self.Builder =SpeechStudioAPI(url, token)
-        self.DataModels = None
+# class BuilderStudioModelAiAPi:
+#     def __init__(self, url: str, token: str) -> None:
+#         if not url or not token:
+#             raise ValueError("URL and Token must be provided.")
+#         self.Builder =SpeechStudioAPI(url, token)
+#         self.DataModels = None
 
-    def get_filter(self, FilterModelAI, returnName: str) -> List[str]:
-        if not returnName:
-            raise ValueError("The returnName must be provided.")
+#     def get_filter(self, FilterModelAI, returnName: str) -> List[str]:
+#         if not returnName:
+#             raise ValueError("The returnName must be provided.")
 
-        if not self.DataModels:
-            try:
-                payload ={
-                        "name": FilterModelAI.name if FilterModelAI.name else None,
-                        "category": FilterModelAI.category if FilterModelAI.category else None,
-                        "language": FilterModelAI.category.language if FilterModelAI.category and FilterModelAI.category.language else None,
-                        "isStandard": FilterModelAI.category.isStandard if FilterModelAI.category and FilterModelAI.category.isStandard else None,
-                        "gender": FilterModelAI.category.gender if FilterModelAI.category and FilterModelAI.category.gender else None,
-                        "dialect": FilterModelAI.category.dialect if FilterModelAI.category and FilterModelAI.category.dialect else None,
-                        "type": FilterModelAI.category.Type if FilterModelAI.category and FilterModelAI.category.Type else None
-                    }
-
-                result = self.Builder.get_filtered_models(payload)
+#         if not self.DataModels:
+#             try:
+#                 result = self.Builder.get_filtered_models()
                 
-                print(result)
+#                 print(result)
 
-                if result and result.get("status") == "success"  :
-                    json_data=result['data']
-                    fixed_data = fix_json_format(json_data)
-                    data_model = DataDynamicModel(fixed_data)
+#                 if result and result.get("status") == "success"  :
+#                     json_data=result['data']['data']
+#                     fixed_data = fix_json_format(json_data)
+#                     data_model = DataDynamicModel(fixed_data)
+#                     transformed_data = data_model.transform_model_data()
+#                     self.DataModels = transformed_data
+#                     #self.DataModels = self.transform_model_data(result['data'])
+#                 else:
+#                    #raise ValueError("No data returned from API.")
+#                    error=result.get("message")
+#                    print(f"Message event: {error}")
+#                    print()
+#                    return None
+#             except Exception as e:
+#                 raise ValueError(f"Error while getting get filter  models: {e}")
+#                 return None
 
-                    transformed_data = data_model.transform_model_data()
-                    self.DataModels = transformed_data
-                    #self.DataModels = self.transform_model_data(result['data'])
-                else:
-                   #raise ValueError("No data returned from API.")
-                   error=result.get("message")
-                   print(f"Message event: {error}")
-                   print()
-                   return None
-            except Exception as e:
-                raise ValueError(f"Error while getting get filter  models: {e}")
-                return None
+#         try:
 
-        try:
+#             unique_values = {getattr(model, returnName) for model in self.DataModels if getattr(model, returnName) is not None}
+#         except AttributeError:
+#             #raise ValueError(f"Field '{returnName}' does not exist in the model data.")
+#             return None
 
-            unique_values = {getattr(model, returnName) for model in self.DataModels if getattr(model, returnName) is not None}
-        except AttributeError:
-            #raise ValueError(f"Field '{returnName}' does not exist in the model data.")
-            return None
+#         return list(unique_values)
 
-        return list(unique_values)
+#     def transform_model_data(self, raw_data) -> List:
+#         if not raw_data or not isinstance(raw_data, list):
+#             raise ValueError("Invalid data format: raw_data should be a list of dictionaries.")
 
-    def transform_model_data(self, raw_data) -> List:
-        if not raw_data or not isinstance(raw_data, list):
-            raise ValueError("Invalid data format: raw_data should be a list of dictionaries.")
-
-        transformed_list = []
+#         transformed_list = []
 
         
-        for item in raw_data:
-            if not isinstance(item, dict):
-                raise ValueError("Each item in raw_data must be a dictionary.")
+#         for item in raw_data:
+#             if not isinstance(item, dict):
+#                 raise ValueError("Each item in raw_data must be a dictionary.")
 
-            absolute_path = item.get('AbsolutePath', '')
-            category = item.get('category', 'General').capitalize()  # Ensure category has a default value
-            if category.lower() == 'ganaral':
-                category = 'General'
+#             absolute_path = item.get('AbsolutePath', '')
+#             category = item.get('category', 'General').capitalize()  # Ensure category has a default value
+#             if category.lower() == 'ganaral':
+#                 category = 'General'
 
-            language = 'Arabic' if item.get('language', '').lower() == 'arabic' else 'English'
-            dialect = item.get('dialect', '').replace('NAGD', 'Najdi Dialect') if item.get('dialect') else ''
-            gender = 'Female' if item.get('gender', '').lower() == 'female' else 'Male'
-            isStandard = item.get('isStandard', False)
+#             language = 'Arabic' if item.get('language', '').lower() == 'arabic' else 'English'
+#             dialect = item.get('dialect', '').replace('NAGD', 'Najdi Dialect') if item.get('dialect') else ''
+#             gender = 'Female' if item.get('gender', '').lower() == 'female' else 'Male'
+#             isStandard = item.get('isStandard', False)
 
-            try:
-                model = ModelAiCreate(
-                    name=item.get('name', 'Unnamed Model'),
-                    AbsolutePath=absolute_path,
-                    category=category,
-                    language=language,
-                    isStandard=isStandard,
-                    gender=gender,
-                    dialect=dialect,
-                    Type=item.get('type', 'Unknown')
-                )
-                transformed_list.append(model)
-            except Exception as e:
-                raise ValueError(f"Error creating model object: {e}")
+#             try:
+#                 model = ModelAiCreate(
+#                     name=item.get('name', 'Unnamed Model'),
+#                     AbsolutePath=absolute_path,
+#                     category=category,
+#                     language=language,
+#                     isStandard=isStandard,
+#                     gender=gender,
+#                     dialect=dialect,
+#                     Type=item.get('type', 'Unknown')
+#                 )
+#                 transformed_list.append(model)
+#             except Exception as e:
+#                 raise ValueError(f"Error creating model object: {e}")
 
-        return transformed_list
+#         return transformed_list
 
-    def get_property(self, field_name: str) -> List[str]:
-        if not field_name:
-            raise ValueError("The field_name must be provided.")
+#     def get_property(self, field_name: str) -> List[str]:
+#         if not field_name:
+#             raise ValueError("The field_name must be provided.")
 
-        return self.get_filter(FilterModelAI(), field_name)
+#         return self.get_filter(FilterModelAI(), field_name)
 
 
 

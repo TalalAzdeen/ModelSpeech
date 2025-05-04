@@ -114,10 +114,10 @@ class AuthSessionBuilder:
             return {'state':AuthSessionState.API_REQUEST_FAILED}
 
 
-        url="https://asg-api.runasp.net"
+        url="https://lahja-api.runasp.net"
         return {'state':AuthSessionState.SUCCESS,'token':valdata,"urlapi":url,"data":payload.get("data")}
 
-    def send_to_api(self, url, token):
+    def send_to_apii(self, url, token):
 
         """إرسال التوكن إلى API خارجي والتحقق من الاستجابة"""
         try:
@@ -127,11 +127,32 @@ class AuthSessionBuilder:
         except requests.exceptions.RequestException as e:
             print(f"API request failed: {e}")
             return False, None
+    def send_to_api(self, url, token):
+
+          """إرسال التوكن إلى API خارجي والتحقق من الاستجابة"""
+          try:
+
+
+              headers = {
+                        "accept": "text/plain",
+                        "Content-Type": "application/json"
+                    }
+              data = {
+                # "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTZXNzaW9uVG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKVGRHRnlkRVJoZEdVaU9pSTFMekV2TWpBeU5TQTVPakF6T2pVNElGQk5JaXdpWlhod0lqb3hOelEyTVRNek16ZzJMQ0pwYzNNaU9pSnBjM04xWlhJaUxDSmhkV1FpT2lKb2RIUndjem92TDJ4dlkyRnNhRzl6ZERvM01EQXpJbjAucXJuYk90WExrVFNOQlVocVRSS0JKaDVWX0VLTVZsM1Ayd1UyOVdUQ2RBcyIsImV4cCI6MTc0NjIxOTg2NiwiaXNzIjoiaXNzdWVyIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzAwMyJ9.iKzZ7yIFZv4EiE8WvmeNCnt4ap1mZyaV856jFz_MMGM"
+                    "token":token
+                }
+
+              response = requests.post(url, json=data)
+              response.raise_for_status()
+              return True, response.json().get("token")
+          except requests.exceptions.RequestException as e:
+              print(f"API request failed: {e}")
+              return False, None
 
 
 class AuthSessionBuilderSeed:
       def validate (self, token):
-          url="https://asg-api.runasp.net"
+          url="https://lahja-api.runasp.net"
           return {'state':AuthSessionState.SUCCESS,'token':token,"urlapi":url,"data":None}
 
 
@@ -200,7 +221,7 @@ def  create_app(tamplate,isDev=True,inputs=[],outputs=[],exception=APPException(
                      # اذا كنت لم تستخدم الرابط وتضيف له التوكن
                      if len(appsettingdata)==0:
                         # هذا تنشه  من  api create AuthorizationSession
-                        token_session="""eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTZXNzaW9uVG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKbGVIQWlPakUzTkRRNE16TTJNelFzSW1semN5STZJbWx6YzNWbGNpSXNJbUYxWkNJNkltaDBkSEJ6T2k4dmJHOWpZV3hvYjNOME9qY3dNRE1pZlEuV1k1ZGVKZlR2S0xUVE5HeGRJSVprdFFhUG5POXAycGxGTURhbkl5YzN4OCIsIkFwaVVybCI6Imh0dHBzOi8vYXNnLWFwaS5ydW5hc3AubmV0L2FwaS9BdXRob3JpemF0aW9uU2Vzc2lvbi92YWxpZGF0ZSIsIldlYlRva2VuIjoiMkV0QktWU0lMcEVTSWxmbW00czZwdHBMSVdmajdRbWRnZzFWS0QybmpCTT0iLCJkYXRhIjoie1wiU2Vzc2lvbklkXCI6XCJkMTdlZGEwMS1jNmM5LTQwMWItYjgxMi1mYjdmNDA5MDc1ZDdcIixcIlN1YnNjcmlwdGlvbklkXCI6XCJzdWJfMVF6T1RIS01RN0xhYmdSVGpFWVhqbncxXCIsXCJTZXJ2aWNlc1wiOlt7XCJJZFwiOlwic2Vydl8zZGFhOWI5YjJmM2E0NjZlYjE1ZWRlY2I0MTU0ODFhZlwiLFwiTmFtZVwiOlwic3RyaW5nXCJ9XSxcIlNwYWNlc1wiOm51bGx9IiwiZXhwIjoxNzQ0ODI2NDM0LCJpc3MiOiJpc3N1ZXIiLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo3MDAzIn0.Z1bOFAPG1JPpUnnJ3ck6sGDPs_xk6gGI0UK0c441SdY"""
+                        token_session="""eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTZXNzaW9uVG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKcWRHa2lPaUpoTlRRNVkyWXpNaTFoTnprNUxUUmhORFF0WVRrMFlpMHlOVGRrTTJFNE9HUTJNMklpTENKbGVIQWlPakUzTkRrd05ERXdNVGtzSW1semN5STZJbWx6YzNWbGNpSXNJbUYxWkNJNkltaDBkSEJ6T2k4dmJHOWpZV3hvYjNOME9qY3dNRE1pZlEuSlh4Q01hbGtmMHJnUHpEOVh2OERPNXlkWEwxdi1TR21XMnA0LXNVaWozbyIsIkFwaVVybCI6Imh0dHBzOi8vbGFoamEtYXBpLnJ1bmFzcC5uZXQvYXBpL3YxL3VzZXIvQXV0aG9yaXphdGlvblNlc3Npb24vdmFsaWRhdGUiLCJXZWJUb2tlbiI6IjM3MTNhYjdmNzkxYzE5OTFkM2EyMTBjNWZhNjhjNWFhIiwiRGF0YSI6IntcIlNlc3Npb25JZFwiOlwic2Vzc18yN2NhNmI2YjcxMWM0YWQ1YjlmZmNmZWEwNjUyMWJkZVwiLFwiU3Vic2NyaXB0aW9uSWRcIjpudWxsLFwiU2VydmljZXNcIjpbe1wiSWRcIjpcInNlcnZfODI4NDYzMTA3OWNjNDBmZjhmYjhhZmExNWRkODZkY2RcIixcIkFic29sdXRlUGF0aFwiOlwic3R1ZGlvLXQyc3BlZWNoXCJ9XSxcIlNwYWNlXCI6e1wiSWRcIjpcInNwYWNlX2YwZGRkZGVkYmYxYzRkNGRhZGI4OTVhNWQ3NDYzMTk5XCIsXCJOYW1lXCI6XCJ0ZXN0XCJ9fSIsImp0aSI6IjAzYWNmNWZhLTgxNWYtNDM2YS1hMTI5LWMzYWEzMTI4NGM3OSIsImV4cCI6MTc0OTA0MTAxOSwiaXNzIjoiaXNzdWVyIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzAwMyJ9.jqkka8Bosdm4Mm0qm1F-jVW35ppV-ELBdrk-JzhD79Q"""
 
                         appsettingdata['token']=token_session
                         appsettingdata['lg']='ar'

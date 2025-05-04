@@ -14,40 +14,40 @@ class DashAPI:
         }
 
     def get_service_usage_data(self):
-        url = f"{self.base_url}/api/Dashboard/ServiceUsageData"
+        url = f"{self.base_url}/api/v1/user/Dashboard/ServiceUsageData"
         response = requests.get(url, headers=self.headers)
         return self._handle_response(response)
 
     def get_service_users_count(self):
-        url = f"{self.base_url}/api/Dashboard/ServiceUsersCount"
+        url = f"{self.base_url}/api/v1/user/Dashboard/ServiceUsersCount"
         response = requests.get(url, headers=self.headers)
         return self._handle_response(response)
     def GetRequestsByDatetime(self,request_data):
-        url = f"{self.base_url}/api/Dashboard/GetRequestsByDatetime"
+        url = f"{self.base_url}/api/v1/user/Dashboard/GetRequestsByDatetime"
         response = requests.get(url, headers=self.headers, json=request_data)
         print(response.json())
         return self._handle_response(response)
 
     def get_service_usage_and_remaining(self):
-        url = f"{self.base_url}/api/Dashboard/ServiceUsageAndRemaining"
+        url = f"{self.base_url}/api/v1/user/Dashboard/ServiceUsageAndRemaining"
         response = requests.get(url, headers=self.headers)
         return self._handle_response(response)
     def get_ModelAi_Service_Requests(self):
-        url = f"{self.base_url}/api/Dashboard/ModelAiServiceRequests"
+        url = f"{self.base_url}/api/v1/user/Dashboard/ModelAiServiceRequests"
         response = requests.get(url, headers=self.headers)
         return self._handle_response(response)
     def post_service_requests(self, request_data):
-        url = f"{self.base_url}/api/Dashboard/ServiceRequests"
+        url = f"{self.base_url}/api/v1/user/Dashboard/ServiceRequests"
         response = requests.post(url, headers=self.headers, json=request_data)
         return self._handle_response(response)
 
     def get_model_ai_service_requests(self):
-        url = f"{self.base_url}/api/Dashboard/ModelAiServiceRequests"
+        url = f"{self.base_url}/api/v1/user/Dashboard/ModelAiServiceRequests"
         response = requests.get(url, headers=self.headers)
         return self._handle_response(response)
 
     def get_space_requests(self):
-        url = f"{self.base_url}/api/Dashboard/SpaceRequests"
+        url = f"{self.base_url}/api/v1/user/Dashboard/SpaceRequests"
         response = requests.get(url, headers=self.headers)
         return self._handle_response(response)
 
