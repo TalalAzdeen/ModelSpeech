@@ -95,9 +95,10 @@ class SpeechStudioAPI:
             self.base_url = url
             self.token = token
             self.headers = {
-                "Authorization": self.token,
-                "Content-Type": "application/json"
-            }
+            "accept": "text/plain",
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}"  # Use Bearer token without spaces
+        }
             print("Builder initialized successfully.")
         except Exception as e:
             print(f"Error initializing builder: {e}")

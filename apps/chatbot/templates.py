@@ -1,9 +1,10 @@
 
+from pydantic_core.core_schema import dataclass_args_schema
 from .seeds import *
 # from .builders import *
 import gradio as gr
 from apps.base.builders import BuilderStudioModelAiAPi
- 
+from apps.base.builders import BuilderRequest 
 from gradio_client import Client, exceptions
 import pandas as pd
 from random import randint
@@ -11,7 +12,7 @@ import plotly.express as px
 import time
 from typing import Optional, Text
 from .components import *
-from apps.base.builders import BuilderRequest
+
 from .routers import *
 
 
@@ -143,7 +144,6 @@ class TemplateSpeechStudioBuilder:
     def send_request(self,data):
     
         try:
-
             request = self.builderRequest.send_create_request_quary(data)
             return request
         except Exception as e:
@@ -449,6 +449,7 @@ class TemplateSpeechStudioBuilder:
         self.msg_event = f"Creating app for language {language}"
         print(self.msg_event )
         self.data = data
+        print(self.token)
         print(data)
         with gr.Column() as service_dashboard:
             createchat(self)

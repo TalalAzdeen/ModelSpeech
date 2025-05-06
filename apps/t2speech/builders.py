@@ -23,6 +23,7 @@ class BuilderStudioModelAiAPi:
                 if result and result.get("status") == "success"  :
 
                     self.DataModels = self.transform_model_data(result['data'])
+                    print(f"self.DataModels{self.DataModels}")
                 else:
                    #raise ValueError("No data returned from API.")
                    error=result.get("message")

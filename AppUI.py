@@ -115,7 +115,7 @@ class AuthSessionBuilder:
 
 
         url="https://lahja-api.runasp.net"
-        return {'state':AuthSessionState.SUCCESS,'token':valdata,"urlapi":url,"data":payload.get("data")}
+        return {'state':AuthSessionState.SUCCESS,'token':valdata,"urlapi":url,"data":payload.get("Data"),"dataApi":payload.get("Data")}
 
     def send_to_apii(self, url, token):
 
@@ -221,7 +221,7 @@ def  create_app(tamplate,isDev=True,inputs=[],outputs=[],exception=APPException(
                      # اذا كنت لم تستخدم الرابط وتضيف له التوكن
                      if len(appsettingdata)==0:
                         # هذا تنشه  من  api create AuthorizationSession
-                        token_session="""eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTZXNzaW9uVG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKcWRHa2lPaUpoTlRRNVkyWXpNaTFoTnprNUxUUmhORFF0WVRrMFlpMHlOVGRrTTJFNE9HUTJNMklpTENKbGVIQWlPakUzTkRrd05ERXdNVGtzSW1semN5STZJbWx6YzNWbGNpSXNJbUYxWkNJNkltaDBkSEJ6T2k4dmJHOWpZV3hvYjNOME9qY3dNRE1pZlEuSlh4Q01hbGtmMHJnUHpEOVh2OERPNXlkWEwxdi1TR21XMnA0LXNVaWozbyIsIkFwaVVybCI6Imh0dHBzOi8vbGFoamEtYXBpLnJ1bmFzcC5uZXQvYXBpL3YxL3VzZXIvQXV0aG9yaXphdGlvblNlc3Npb24vdmFsaWRhdGUiLCJXZWJUb2tlbiI6IjM3MTNhYjdmNzkxYzE5OTFkM2EyMTBjNWZhNjhjNWFhIiwiRGF0YSI6IntcIlNlc3Npb25JZFwiOlwic2Vzc18yN2NhNmI2YjcxMWM0YWQ1YjlmZmNmZWEwNjUyMWJkZVwiLFwiU3Vic2NyaXB0aW9uSWRcIjpudWxsLFwiU2VydmljZXNcIjpbe1wiSWRcIjpcInNlcnZfODI4NDYzMTA3OWNjNDBmZjhmYjhhZmExNWRkODZkY2RcIixcIkFic29sdXRlUGF0aFwiOlwic3R1ZGlvLXQyc3BlZWNoXCJ9XSxcIlNwYWNlXCI6e1wiSWRcIjpcInNwYWNlX2YwZGRkZGVkYmYxYzRkNGRhZGI4OTVhNWQ3NDYzMTk5XCIsXCJOYW1lXCI6XCJ0ZXN0XCJ9fSIsImp0aSI6IjAzYWNmNWZhLTgxNWYtNDM2YS1hMTI5LWMzYWEzMTI4NGM3OSIsImV4cCI6MTc0OTA0MTAxOSwiaXNzIjoiaXNzdWVyIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzAwMyJ9.jqkka8Bosdm4Mm0qm1F-jVW35ppV-ELBdrk-JzhD79Q"""
+                        token_session="""eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTZXNzaW9uVG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKcWRHa2lPaUl4WVRnd1kyVTBaaTAwWmpKbExUUTBOVFl0WWpVMVlpMHdZakkxWVRKaE1qVTRaakVpTENKbGVIQWlPakUzTmpVd01qWTNNVFlzSW1semN5STZJbWx6YzNWbGNpSXNJbUYxWkNJNkltaDBkSEJ6T2k4dmJHOWpZV3hvYjNOME9qY3dNRE1pZlEueW5XRjdjY3R5Y3dGZVdfbFZxQktzdzIybzF0eDgxcGRvd3VOMkpUdnFPTSIsIkFwaVVybCI6Imh0dHBzOi8vbGFoamEtYXBpLnJ1bmFzcC5uZXQvYXBpL3YxL3VzZXIvQXV0aG9yaXphdGlvblNlc3Npb24vdmFsaWRhdGUiLCJXZWJUb2tlbiI6IjM3MTNhYjdmNzkxYzE5OTFkM2EyMTBjNWZhNjhjNWFhIiwiRGF0YSI6IntcIlNlc3Npb25JZFwiOlwic2Vzc197R3VpZC5OZXdHdWlkKCk6Tn1cIixcIlN1YnNjcmlwdGlvbklkXCI6bnVsbCxcIlNlcnZpY2VzXCI6W3tcIklkXCI6XCJzZXJ2XzRkNWE2MmRjNGViMjQ2MzM4NjE5ZGIwZjE4YTUyNDc5XCIsXCJBYnNvbHV0ZVBhdGhcIjpcImNoYXRib3RcIn0se1wiSWRcIjpcInNlcnZfODI4NDYzMTA3OWNjNDBmZjhmYjhhZmExNWRkODZkY2RcIixcIkFic29sdXRlUGF0aFwiOlwic3R1ZGlvLXQyc3BlZWNoXCJ9LHtcIklkXCI6XCJzZXJ2X2JhNjlhZWMxNDRkNzRkODk5YzUxMzg5NDVjYTUzODYxXCIsXCJBYnNvbHV0ZVBhdGhcIjpcInQyc3BlZWNobXVpdFwifV0sXCJTcGFjZVwiOntcIklkXCI6XCJzcGFjZV8wNGVhNmMwOWVkMjA0YmIwOGU4OTUyOWU5OTNhYTk3MFwiLFwiTmFtZVwiOlwic3RyaW5nXCJ9fSIsImp0aSI6IjY3MTlmZGQ0LWMwNmEtNDAwYi1hMWM5LWYwM2Y0NTE1OTgzMCIsImV4cCI6MTc2NTAyNjcxNiwiaXNzIjoiaXNzdWVyIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzAwMyJ9.-grOp94-Akad2PnIOrMqNku8UYOHZKxaLC929UfvLG8"""
 
                         appsettingdata['token']=token_session
                         appsettingdata['lg']='ar'
@@ -258,8 +258,8 @@ def  create_app(tamplate,isDev=True,inputs=[],outputs=[],exception=APPException(
                       else:
                           print("#Token  successful ")
                           #token="""Bearer CfDJ8Hr3sPyh0OJGnuGNrgSdKHxHdNfonEDv0j3gjLnaovJ91wx6_arbOYO1FA3mUJ3DaJky_EL-hatDdmvSy6voElNyDHxdG6KfCDSTZ9CA8Msh4iLzaWPy_I3EYppWt8RulCzgqd8sgKO1gfOL5qJTKErdyLJboOOtH5vsVJTp1Z1ChMkqjbOYTnOQqn6qbJifxrRwl2l10Fnfrewyb_JsITsivCAs-2KSG42Mz615mkoJztTnRkUIFI_g8JPJV7yx9je_sIZK_fdMqu0CTGx5sMrdBH7DydLJm6ynu5a6IBvSYGZ-es46PacVodoGvxaFO4HwAe-_29KYtDnaSgeRkXTRONix1pimTx21OnEO18O02WcudiOKFbZCvUZKZzIQWk2ms_v7kwBXhGEv_aSy3Rn2KZb_vcey-k78QyG83HJ3PBsLrefWTH_svpSmlLeo9OngPtCVUmbiAImtUyqJz9cGPpOOYvWJhJYS3j0LPZGXt_JfFn-Wbd3ebgjlqxnPTZCpPSSvj99hDAT_vnxH4NFBl6hCpGTNv6uwzTvlFDaSYjEwNiu8NLR_pzbvc_voYdGB2L2t86dIyzTRvT8Oxu_lBswXd0q078fFH54iPtIzEB3bAXiwaP6YxJhNLvR45jAhr28NHVtjfFcroAdJRBx2iL8jps649pt7IO2PCAt2FcrogI7oOV_Cz_z1o3Y6D5tPACC6SO1Xc8tyt9z__T18OPSsYZgEZ4AN9QeYw72SHK13Be7xuywNuqhZIT7KZYLi4VbsADd2prHbIJhdUYNlkX3zw19ItdMAz3iY19P78_WrbDSaVTXhruJiqMD8onTrNES3sdiqEzXl8VomSVZ2IaZOFFPTBajEFoffsvTX6VK9XGgwhd3yNuo5EzJl9hvybwMZMBgcQPi6yr3pXIUuLUdY65WnIAQJhapqV89j"""
-                          token=token ="Bearer " + res['token']
-
+                          #token ="Bearer " + res['token']
+                          token = res['token']
                           urlapi=res['urlapi']
                           lg=appsettingdata.pop("lg")
 

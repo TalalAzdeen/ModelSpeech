@@ -1,7 +1,7 @@
 from .clients import *
 from .seeds import  RequestDev
-from .DataDynamicModel import *
-
+import json
+from .AutoMapper import *
 class BuilderRequest:
     def __init__(self, Url, Token, IsDev=True, max_dev_requests=2):
         """  Initialize the request builder with API or dev mode"""
@@ -44,26 +44,84 @@ class BuilderRequest:
 
 
      
+
+    def extract_service_data(self,res: dict, service_name: str) -> dict:
+      """
+      Extract serviceId and spaceId from the response based on the service name.
+
+      :param res: Dictionary containing a 'data' key as a JSON string.
+      :param service_name: The name to match with the 'AbsolutePath' of a service.
+      :return: Dictionary containing 'question', 'spaceid', and 'serviceId'.
+      """
+      try:
+          # Parse the JSON string into a dictionary
+          data_dict = json.loads(res)
+          
+          # Extract Space and Services information
+          spaces = data_dict['Space']
+          services = data_dict['Services']
+          
+          # Find the matching service
+          for service in services:
+              if service.get('AbsolutePath') == service_name:
+                  return {
+                      "question": "string",
+                      "spaceid": spaces['Id'],
+                      "serviceId": service['Id']
+                  }
+
+          # Raise error if the service is not found
+          raise ValueError(f"Service with name '{service_name}' not found.")
+
+      except (KeyError, json.JSONDecodeError, TypeError) as e:
+          raise ValueError(f"Error processing data: {e}")
+
   
-    def send_create_request_quary(self,quary):
+    def send_create_request_quary(self,data,nameT):
         
         if self.isdiv==False:
-              print(quary)
-              #data=quary['api']
-             # dynamic_model_instance =DataDynamicModel(data).convert_to_dynamic_model()
-             # print(f"DataDynamicModel{dynamic_model_instance}")
-              #if dynamic_model_instance.Spaces==None
+              d=data['api']
+              
+              data=self.extract_service_data(d,nameT)
+              print(data)
+              first_service_id =data["serviceId"]
+              space_id = data["spaceid"]
               return self.Create_request(
                 value="string",
-                spaceid="space_f0ddddedbf1c4d4dadb895a5d7463199",
-                serviceId="serv_8284631079cc40ff8fb8afa15dd86dcd"
+                spaceid=space_id, 
+                serviceId=first_service_id
               #  serviceId=dynamic_model_instance.SubscriptionId
 
               
             
               )
+             #   data = quary['api']
+    
+# # إنشاء كائن  
+#               fixed_data = fix_json_format(api_data)
+#               print(fixed_data)
+#               dynamic_model_instance =DataDynamicModel(fixed_data).convert_to_dynamic_model()
+#               print(dynamic_model_instance)
+#               service_ids = [service.Id for service in dynamic_model_instance.Services]
+#               spaceid=dynamic_model_instance.Space.Id
+#                 session_id = data["SessionId"]
+#                 subscription_id = data["SubscriptionId"]
+#                 first_service_id = data["Services"][0]["Id"]
+#                 space_id = data["Space"]["Id"]
+
+# # طباعة النتائج
+#                 print("Session ID:", session_id)
+#                 print("Subscription ID:", subscription_id)
+#                 print("First Service ID:", first_service_id)
+#                 print("Space ID:", space_id)
+           
+               
+              #if dynamic_model_instance.Spaces==None
+               
         else:
+            print("false")
             return self.Create_request(
+
                 value="string",
                 spaceid="space_001fc819a6ae4492be877f2869a3cbd3",
                 serviceId="dynamic_model_instance.SubscriptionId"
@@ -76,12 +134,13 @@ class BuilderRequest:
  
     def send_event_request_quary(self,data,request,result,status_code):
            
-           if self.isdiv:
+           if self.isdiv==False:
+                print(f"send_event_request_quary{request}")
                 event_id=request["data"]["eventId"]   
                 status=request["status"]
                 return self.send_event_request(event_id,result,status)
            else:
-               
+                print("fff")
                 event_id="space_001fc819a6ae4492be877f2869a3cbd3"  
                 status="fffffff"
                 return self.send_event_request(event_id,result,"rrrr")
@@ -101,8 +160,9 @@ class BuilderRequest:
 
                 data ={
                     "eventId":event_id,
-                    "result":result,
-                    "status":status
+                  
+                    "status":status,
+                    "details":result,
                 }
                 self.msg_event = "Sending send_event_request to create"
                 result=self.builder.send_event_request(data)
@@ -145,7 +205,7 @@ class BuilderRequest:
 
           data = {
 
-              "value": value.strip(),
+              "question": value.strip(),
                "spaceId":spaceid.strip(),
               "serviceId": serviceId.strip()
                }
@@ -379,7 +439,6 @@ class BuilderStudioModelAiAPi:
 #                     "message":"An error occurred while processing the request.",
 #                     "details":str(e),
 #                     "status_code":0
-#                   }
-
-
+#    = self.generate_dynamic_model(self.parsed_data)
+       
 

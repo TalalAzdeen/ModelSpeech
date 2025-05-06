@@ -10,7 +10,8 @@ import plotly.express as px
 import time
 from typing import Optional, Text
 from .components import *
-
+from apps.base.builders import BuilderRequest
+from apps.base.builders import BuilderStudioModelAiAPi
 class TemplateTextToSpeechStudioBuilder:
     def __init__(self, url, token, isDev=True, data=None) -> None:
         self.msg_event = "Initialization started"
@@ -21,14 +22,14 @@ class TemplateTextToSpeechStudioBuilder:
 
         if isDev:
             self.builder = BuilderStudioModelAiSpeed(models_list)
-            self.builderRequest = TemplateBuilderRequest(url, token, True)
+            self.builderRequest =BuilderRequest(url, token, True) 
             self.msg_event = "Development environment initialized"
 
 
         else:
 
             self.builder = BuilderStudioModelAiAPi(url,token)
-            self.builderRequest = TemplateBuilderRequest(url, token, False)
+            self.builderRequest =BuilderRequest(url, token, False)
             self.msg_event = "api  environment initialized"
 
 
@@ -109,7 +110,55 @@ class TemplateTextToSpeechStudioBuilder:
              #return service_ids[0]
 
              return "serv_3daa9b9b2f3a466eb15edecb415481af"
+
+    def handle_error(self, message, status_code):
+        self.msg_event = message
+        self.status_code = status_code
+        print(f"status_code :{status_code}")
+        print(f"msg_event: {message}")
+        
+        result=f"status_code :{status_code},message:{message}"
+
+
+        return result 
+
+
+   #######################################################################3    
     
+    def error_event_handler(self, e, function_name=""):
+ 
+   
+          error_message = f"Error in {function_name}: {str(e)}"
+          print(f"Error Message:{error_message}")
+          
+          
+          return {
+              "status": "error",
+              "message": error_message,
+              "status_code": 500
+          }
+
+
+    def send_request(self,data):
+    
+        try:
+            request = self.builderRequest.send_create_request_quary(data,"studio-t2speech")
+            return request
+        except Exception as e:
+            
+            return self.error_event_handler(e, function_name="send_request")        
+    def send_event_request(self,data,request,result,status_code):
+      
+        try:
+
+
+            result_request = self.builderRequest.send_event_request_quary(data, request, result,status_code)
+            return result_request
+        except Exception as e:
+              return self.error_event_handler(e, function_name="send_event_request")
+
+##################################################################################3
+
     def modelspeech(self, message="",name_model="wasmdashai/vits-ar-sa-huba-v2",speaking_rate=0.8, double_duration=1.0):
 
         if not message or message == "":
@@ -131,7 +180,7 @@ class TemplateTextToSpeechStudioBuilder:
              self.serviceId=self.get_serviceId()
         print(f"ServiceId: {self.serviceId}")
 
-        request = self.builderRequest.Create_request(serviceId=self.serviceId)
+        request =self.send_request(self.data)
         
         datarquest=self.get_data_TextToSpeech_txt_model(data={})
         result = ""
@@ -184,9 +233,9 @@ class TemplateTextToSpeechStudioBuilder:
                      
                     status=request["status"]
 
+                    result_request=self.send_event_request(self.data,request,result,self.status_code)
 
-
-                    result_request=self.builderRequest.send_event_request(event_id,result,status)
+                    #result_request=self.builderRequest.send_event_request(event_id,result,status)
                     print(f"result: {result_request}")
                     if result_request and result_request["status"]=="success":
                         self.msg_event = "predict completed successfully"
@@ -350,20 +399,19 @@ class TemplateTextToSpeechBuilder:
 
         if isDev:
             self.builder = BuilderStudioModelAiSpeed(models_list)
-            self.builderRequest = TemplateBuilderRequest(url, token, True)
+            self.builderRequest = BuilderRequest(url, token, True)
             self.msg_event = "Development environment initialized"
 
 
         else:
 
             self.builder = BuilderStudioModelAiAPi(url,token)
-            self.builderRequest = TemplateBuilderRequest(url, token, False)
+            self.builderRequest =BuilderRequest(url, token, False)
             self.msg_event = "api  environment initialized"
 
 
 
         self.token = token
-
         self.url = url
 
         self.client = None
@@ -425,8 +473,39 @@ class TemplateTextToSpeechBuilder:
                 "status_code": status_code
             }
 
+ #result_request=self.send_event_request(self.data,request,result,self.status_code)
+#######################################################################3
+    def error_event_handler(self, e, function_name=""):
+ 
+   
+          error_message = f"Error in {function_name}: {str(e)}"
+          print(f"Error Message:{error_message}")
+          
+          
+          return {
+              "status": "error",
+              "message": error_message,
+              "status_code": 500
+          }
 
 
+    def send_request(self,data):
+    
+        try:
+            request = self.builderRequest.send_create_request_quary(data,"studio-t2speech")
+            return request
+        except Exception as e:
+            
+            return self.error_event_handler(e, function_name="send_request")        
+    def send_event_request(self,data,request,result,status_code):
+      
+        try:
+
+
+            result_request = self.builderRequest.send_event_request_quary(data, request, result,status_code)
+            return result_request
+        except Exception as e:
+              return self.error_event_handler(e, function_name="send_event_request")
 
     def get_serviceId(self):
          if self.Isdiv:
@@ -460,7 +539,7 @@ class TemplateTextToSpeechBuilder:
              self.serviceId=self.get_serviceId()
         print(f"ServiceId: {self.serviceId}")
 
-        request = self.builderRequest.Create_request(serviceId=self.serviceId)
+        request = self.send_request(self.data)
         
         datarquest=self.get_data_TextToSpeech_txt_model(data={})
         result = ""
@@ -515,7 +594,7 @@ class TemplateTextToSpeechBuilder:
 
 
 
-                    result_request=self.builderRequest.send_event_request(event_id,result,status)
+                    result_request=self.send_event_request(self.data,request,result,self.status_code)
                     print(f"result: {result_request}")
                     if result_request and result_request["status"]=="success":
                         self.msg_event = "predict completed successfully"
@@ -556,6 +635,37 @@ class TemplateTextToSpeechBuilder:
 
 
         return result,bodyicon
+
+    def handle_error(self, message, status_code):
+        self.msg_event = message
+        self.status_code = status_code
+        print(f"status_code :{status_code}")
+        print(f"msg_event: {message}")
+        
+        result=f"status_code :{status_code},message:{message}"
+
+
+        return result 
+       
+
+
+    def send_request(self,data):
+    
+        try:
+            request = self.builderRequest.send_create_request_quary(data,"studio-t2speech")
+            return request
+        except Exception as e:
+            
+            return self.error_event_handler(e, function_name="send_request")        
+    def send_event_request(self,data,request,result,status_code):
+      
+        try:
+
+
+            result_request = self.builderRequest.send_event_request_quary(data, request, result,status_code)
+            return result_request
+        except Exception as e:
+              return self.error_event_handler(e, function_name="send_event_request")
 
 
 

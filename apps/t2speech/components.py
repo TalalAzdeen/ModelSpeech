@@ -84,15 +84,22 @@ from random import randint
 import plotly.express as px
 import time
 from typing import Optional
-
+from .models import *
 def createTextToSpeech(builder, lg="en"):
     try:
         print(f"Creating TextToSpeech")
         #m_category=builder.get_filter(FilterModelAI(type="Chat"),"category")
+        m_category=[]
+        fist_categary=[]
+        type_server_pige="Chat"
+        if builder.Isdiv==False:
+            m_category=builder.get_filter(FilterModelAI(Type=type_server_pige),"category")
+        else:
 
-        m_category = builder.builder.get_property("category")
-        if m_category is None:
-            m_category = []
+            m_category = builder.builder.get_property("category")
+            
+        if m_category !=None:
+           fist_categary=m_category[0]
          
         #m_category=None
         current_language = lg
@@ -104,7 +111,7 @@ def createTextToSpeech(builder, lg="en"):
                         category_dropdown = gr.Dropdown(
                             choices=m_category,
                             label=LANGUAGES[current_language]["category"],
-                            value=[],
+                            value=fist_categary,
                             info=LANGUAGES[current_language]["choose_category"]
 
                         )
@@ -164,7 +171,7 @@ def createTextToSpeech(builder, lg="en"):
 
                       chat_input = gr.MultimodalTextbox(
                           interactive=True,
-                           visible=False,
+                           visible=True,
                           placeholder=LANGUAGES[current_language]["enter_message"],
                           show_label=False,
                           lines=3,
@@ -203,7 +210,9 @@ def createTextToSpeech(builder, lg="en"):
 
 def create_t2speech(builder,current_language="en"):
     try:
-        listmodel =builder.builder.get_property("AbsolutePath")
+        type_server_pige="Chat"
+        #listmodel =builder.builder.get_property("absolutePath")
+        listmodel=builder.get_filter(FilterModelAI(Type=type_server_pige),"absolutePath")
         if listmodel is None:
             frist=None
             listmodel = []
