@@ -144,7 +144,7 @@ class TemplateSpeechStudioBuilder:
     def send_request(self,data):
     
         try:
-            request = self.builderRequest.send_create_request_quary(data)
+            request = self.builderRequest.send_create_request_quary(data,"chatbot")
             return request
         except Exception as e:
             
