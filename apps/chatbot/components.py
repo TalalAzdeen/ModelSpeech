@@ -1,4 +1,9 @@
-
+with gr.Blocks() as demo:
+    gr.Markdown("## روابط النماذج المتاحة:")
+    gr.Markdown("[افتح studio-t2text](https://modelspeech-sy6y.onrender.com/studio-t2text/)")
+    gr.Markdown("[افتح studio-](https://modelspeech-sy6y.onrender.com/studio-t2text/)")
+    gr.Markdown("[افتح studio-t2text](https://modelspeech-sy6y.onrender.com/t2speech/)")
+    gr.Markdown("[افتح studio-](https://modelspeech-sy6y.onrender.com/studio-t2speech/)")
  
 # import base64
 # import os
