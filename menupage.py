@@ -69,4 +69,4 @@ with gr.Blocks() as demo:
     # تهيئة العرض عند بدء التشغيل
     demo.load(fn=update_menu, inputs=[base_url_input, token_input], outputs=menu_html)
 
-demo.launch()
+#demo.launch()
