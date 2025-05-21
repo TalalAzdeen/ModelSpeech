@@ -6,6 +6,6 @@ from .t2text.templates  import TemplateTextToTextStudioBuilder,TemplateTextToTex
 from .t2speech.templates  import TemplateTextToSpeechStudioBuilder,TemplateTextToSpeechBuilder
 isDev=True
 APIS=[
-  (create_api(TemplateSpeechStudioBuilder,isDev),'/user')
-  (create_api(TemplateTextToTextStudioBuilder,isDev),'/textstudiorouter'),
+  (create_api(TemplateSpeechStudioBuilder,isDev),'/user'),
+  (create_api(TemplateTextToTextStudioBuilder,isDev),'/textstudiorouter')
 ]
