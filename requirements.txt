@@ -5,3 +5,4 @@ plotly
 sqlalchemy 
 psycopg2
 modelscope_studio==1.2.1
+openai
