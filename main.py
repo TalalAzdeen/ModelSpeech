@@ -46,8 +46,8 @@ app = gr.mount_gradio_app(app, menupage.demo, path='/menupage')
 from apps.ui_apps import APPS
 for uiapp,path in APPS:
    
-    #app = gr.mount_gradio_app(app, uiapp, path="/"+path)
-    uiapp.launch(show_error=True,share=True)
+    app = gr.mount_gradio_app(app, uiapp, path="/"+path)
+    #uiapp.launch(show_error=True,share=True)
 
 from apps.api_routers import APIS
 for router,path in  APIS:
