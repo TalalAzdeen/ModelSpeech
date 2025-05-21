@@ -11,7 +11,7 @@ import plotly.express as px
 import time
 from typing import Optional, Text
 from .components import *
-
+from .routers import *
 class TemplateTextToTextStudioBuilder:
     def __init__(self, url, token, isDev=True, data=None) -> None:
         self.msg_event = "Initialization started"
@@ -342,6 +342,10 @@ class TemplateTextToTextStudioBuilder:
         first_value = default_model[0] if default_model and isinstance(default_model, list) else None
         return gr.update(choices=default_model, value=first_value,visible=True)
 
+    def createapi(self, data=None, language="en"):
+
+        return TexttoTextStudioHandler(self).get_router()
+
 
     def createapp(self, data=None, language="en"):
 
@@ -668,6 +672,7 @@ class TemplateTextToTextBuilder:
                     return None
           result=self.builder.get_filter(FilterModelAI,returnName)
           return result
+ 
  
     def update_languages(self, category):
 

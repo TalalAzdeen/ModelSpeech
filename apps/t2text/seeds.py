@@ -75,11 +75,11 @@ class BuilderDataModelAi:
         return filtered_models
 
 
-models_list = [
-    ModelAiCreate(name="AI Model 5", AbsolutePath="", category="General", language="Arabic", isStandard=True, gender="Female", dialect="Najdi Dialect", Type="chat"), # Added AbsolutePath=""
-    ModelAiCreate(name="AI Model 2", AbsolutePath="", category="News", language="English", isStandard=False, gender="Female", dialect="American Dialect", Type="chat"), # Added AbsolutePath=""
-    ModelAiCreate(name="AI Model 3", AbsolutePath="", category="General", language="Arabic", isStandard=True, gender="Female", dialect="Hijazi Dialect", Type="chat"), # Added AbsolutePath=""
-    ModelAiCreate(name="AI Model 1", AbsolutePath="", category="General", language="Arabic", isStandard=True, gender="Male", dialect="Najdi Dialect", Type="chat"), # Added AbsolutePath=""
+models_list =[
+    ModelAiCreate(name="AI Model 5", AbsolutePath="MoelText1", category="General", language="Arabic", isStandard=True, gender="Female", dialect="Najdi Dialect", Type="chat"), # Added AbsolutePath=""
+    ModelAiCreate(name="AI Model 2", AbsolutePath="MoelText2", category="News", language="English", isStandard=False, gender="Female", dialect="American Dialect", Type="chat"), # Added AbsolutePath=""
+    ModelAiCreate(name="AI Model 3", AbsolutePath="MoelText3", category="General", language="Arabic", isStandard=True, gender="Female", dialect="Hijazi Dialect", Type="chat"), # Added AbsolutePath=""
+    ModelAiCreate(name="AI Model 1", AbsolutePath="MoelText4", category="General", language="Arabic", isStandard=True, gender="Male", dialect="Najdi Dialect", Type="chat"), # Added AbsolutePath=""
               ]
 
 

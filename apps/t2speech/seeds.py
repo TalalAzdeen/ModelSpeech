@@ -76,10 +76,10 @@ class BuilderDataModelAi:
 
 
 models_list = [
-    ModelAiCreate(name="AI Model 5", AbsolutePath="", category="General", language="Arabic", isStandard=True, gender="Female", dialect="Najdi Dialect", Type="chat"), # Added AbsolutePath=""
-    ModelAiCreate(name="AI Model 2", AbsolutePath="", category="News", language="English", isStandard=False, gender="Female", dialect="American Dialect", Type="chat"), # Added AbsolutePath=""
-    ModelAiCreate(name="AI Model 3", AbsolutePath="", category="General", language="Arabic", isStandard=True, gender="Female", dialect="Hijazi Dialect", Type="chat"), # Added AbsolutePath=""
-    ModelAiCreate(name="AI Model 1", AbsolutePath="", category="General", language="Arabic", isStandard=True, gender="Male", dialect="Najdi Dialect", Type="chat"), # Added AbsolutePath=""
+    ModelAiCreate(name="AI Model 5", AbsolutePath="Model1", category="General", language="Arabic", isStandard=True, gender="Female", dialect="Najdi Dialect", Type="chat"), # Added AbsolutePath=""
+    ModelAiCreate(name="AI Model 2", AbsolutePath="Model2", category="News", language="English", isStandard=False, gender="Female", dialect="American Dialect", Type="chat"), # Added AbsolutePath=""
+    ModelAiCreate(name="AI Model 3", AbsolutePath="Model3", category="General", language="Arabic", isStandard=True, gender="Female", dialect="Hijazi Dialect", Type="chat"), # Added AbsolutePath=""
+    ModelAiCreate(name="AI Model 1", AbsolutePath="Model4", category="General", language="Arabic", isStandard=True, gender="Male", dialect="Najdi Dialect", Type="chat"), # Added AbsolutePath=""
               ]
 
 

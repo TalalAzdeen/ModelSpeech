@@ -23,7 +23,7 @@ class UserHandler:
         self.router = APIRouter()
         self.__builder = builder
 
-        # تغليف الدوال غير المتعلقة بـ gradio
+       
         @self.router.post("/generate-audio")
         def generate_audio(request: AudioRequest):
             return self.__builder.generate_audio(request.token, request.message)
@@ -34,6 +34,7 @@ class UserHandler:
                 return {"error": "Invalid filter data or return name."}
             result = self.__builder.get_filter(filter_data, return_name)
             return result
+
 
         @self.router.post("/update-languages")
         def update_languages(category: str):

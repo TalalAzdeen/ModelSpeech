@@ -85,25 +85,42 @@ import plotly.express as px
 import time
 from .models import *
 from typing import Optional
+def get_categories(builder, type_name,type_name_dev):
+    """Helper function to get category list and first category"""
+    if not builder:
+        return [], None
+
+    if builder.Isdiv is False:
+        categories = builder.get_filter(FilterModelAI(Type=type_name), "category")
+    else:
+        
+        categories = builder.builder.get_property(type_name_dev)
+
+    first = categories[0] if categories else None
+    return categories, first
 
 def createTextToText(builder, lg="en"):
     try:
-        print(f"Creating TextToText")
+        print(f"Creating TextToTextStudio")
         #m_category=builder.get_filter(FilterModelAI(type="Chat"),"category")
 
-        m_category=[]
-        fist_categary=[]
-        type_server_pige="Chat"
-        if builder.Isdiv==False:
-            m_category=builder.get_filter(FilterModelAI(Type=type_server_pige),"category")
-        else:
-
-            m_category = builder.builder.get_property("category")
+        # m_category=[]
+        # fist_categary=[]
+        # type_server_pige="Chat"
+        # if builder.Isdiv==False:
+        #     m_category=builder.get_filter(FilterModelAI(Type=type_server_pige),"category")
             
-        if m_category !=None:
-           fist_categary=m_category[0]
+        # else:
+
+        #     m_category = builder.builder.get_property("category")
+        #     print(f"m_category:{m_category}")
+            
+        # if m_category !=None:
+        #    fist_categary=m_category[0]
          
         #m_category=None
+        m_category,fist_categary=get_categories(builder,type_name="chat",type_name_dev="category")
+        # type_server_pige="Chat"
         current_language = lg
 
         with gr.Blocks() as panel:
@@ -201,22 +218,25 @@ def createTextToText(builder, lg="en"):
         print(f"An error occurred: {e}")
 def create_t2text(builder,current_language="en"):
     try:
-        type_server_pige="Chat"
-        #listmodel =builder.builder.get_property("absolutePath")
-        listmodel=builder.get_filter(FilterModelAI(Type=type_server_pige),"absolutePath")
-        if listmodel is None:
-            frist=None
-            listmodel = []
-            print(listmodel)
 
-        else:
-            frist=listmodel[0]
+        # type_server_pige="Chat"
+        # #listmodel =builder.builder.get_property("absolutePath")
+        # listmodel=builder.get_filter(FilterModelAI(Type=type_server_pige),"absolutePath")
+        # if listmodel is None:
+        #     frist=None
+        #     listmodel = []
+        #     print(listmodel)
+
+        # else:
+        #     frist=listmodel[0]
+        m_category,fist_categary=get_categories(builder,type_name="chat",type_name_dev="AbsolutePath")
+     
         with gr.Row():
             with gr.Column():
                 model_name = gr.Dropdown(
-                    choices=listmodel,
+                    choices=m_category,
                     label=LANGUAGESTEXT[current_language]["model_name"],
-                    value=frist,
+                    value=fist_categary,
                     interactive=True
                     
                 )
