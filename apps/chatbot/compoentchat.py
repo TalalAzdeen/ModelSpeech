@@ -176,7 +176,7 @@ def create_chatbot_app(builderobj=None, lg="en"):
           
           current_language = lg
           
-      
+          # Black theme CSS
           black_theme_css = """
           :root {#
               --bg-color: #1e1e1e;
@@ -185,7 +185,6 @@ def create_chatbot_app(builderobj=None, lg="en"):
               --border-color: #333333;
               --hover-color: #2a2a2a;
           }
-
           .black-theme {
               background-color: var(--bg-color);
               color: var(--text-color);
