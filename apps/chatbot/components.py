@@ -915,6 +915,92 @@ import time
 
 from typing import Optional, Type
 
+
+def menu_studio(builder, lg="en"):
+          
+
+        m_category=[]
+        fist_categary=[]
+        type_server_pige="Chat"
+        if builder.Isdiv==False:
+            m_category=builder.get_filter(FilterModelAI(Type=type_server_pige),"category")
+        else:
+
+            m_category = builder.builder.get_property("category")
+            
+        if m_category !=None:
+           fist_categary=m_category[0]
+        #m_category=None
+        current_language = lg
+
+        with gr.Blocks() as panel:
+            with gr.Row():
+                with gr.Column(scale=1):
+                    with gr.Accordion(LANGUAGES[current_language]["options"]):
+                        category_dropdown = gr.Dropdown(
+                            choices=m_category,
+                            label=LANGUAGES[current_language]["category"],
+                            value=fist_categary,
+                            info=LANGUAGES[current_language]["choose_category"]
+
+                        )
+                        language_dropdown = gr.Dropdown(
+                            choices=[],
+                            label=LANGUAGES[current_language]["language"],
+                            value=[],
+                            visible=False,
+                            info=LANGUAGES[current_language]["choose_language"]
+                        )
+                        dialect_dropdown = gr.Dropdown(
+                            choices=[],
+                            label=LANGUAGES[current_language]["dialect"],
+                            value=[],
+                            visible=False,
+                            info=LANGUAGES[current_language]["choose_dialect"]
+                        )
+                        model_dropdown = gr.Dropdown(
+
+                            label=LANGUAGES[current_language]["model_name"],
+                            value=[],
+                            visible=False,
+                            interactive=True,
+                            info=LANGUAGES[current_language]["choose_model"]
+                        )
+
+                    with gr.Accordion(LANGUAGES[current_language]["settings"]):
+                        temperature_slider = gr.Slider(
+                            label=LANGUAGES[current_language]["temperature"],
+                            minimum=0.1, maximum=5, step=0.1, value=0.7,interactive=True
+                        )
+                        speech_rate_slider = gr.Slider(
+                            label=LANGUAGES[current_language]["max_token"],
+                            minimum=50, maximum=120000, step=50, value=1024,interactive=True
+                        )
+                        streaming_toggle = gr.Checkbox(
+                            label=LANGUAGES[current_language]["streaming"],interactive=True,
+                            value=True
+                        )
+
+                 
+
+                    category_dropdown.change(
+                        builder.update_languages, inputs=[category_dropdown], outputs=[language_dropdown]
+                    )
+
+                    language_dropdown.change(
+                        builder.update_dialects, inputs=[category_dropdown,language_dropdown], outputs=[dialect_dropdown]
+                    )
+                    dialect_dropdown.change(
+                        builder.update_models, inputs=[category_dropdown,language_dropdown,dialect_dropdown], outputs=[model_dropdown]
+                    )
+
+                   
+                   
+
+      
+
+
+
 def createchat(builder, lg="en"):
     try:
 

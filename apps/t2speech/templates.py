@@ -12,6 +12,7 @@ from typing import Optional, Text
 from .components import *
 from apps.base.builders import BuilderRequest
 from apps.base.builders import BuilderStudioModelAiAPi
+from .routers import *
 class TemplateTextToSpeechStudioBuilder:
     def __init__(self, url, token, isDev=True, data=None) -> None:
         self.msg_event = "Initialization started"
@@ -374,6 +375,9 @@ class TemplateTextToSpeechStudioBuilder:
         first_value = default_model[0] if default_model and isinstance(default_model, list) else None
         return gr.update(choices=default_model, value=first_value,visible=True)
 
+    def createapi(self, data=None, language="en"):
+
+        return SpeechoTextStudioHandler(self).get_router()
 
 
     def createapp(self, data=None, language="en"):

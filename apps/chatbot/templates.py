@@ -1,4 +1,5 @@
 
+from gradio.themes import builder
 from pydantic_core.core_schema import dataclass_args_schema
 from .seeds import *
 # from .builders import *
@@ -12,7 +13,7 @@ import plotly.express as px
 import time
 from typing import Optional, Text
 from .components import *
-
+from .compoentchat import *
 from .routers import *
 
 
@@ -165,6 +166,7 @@ class TemplateSpeechStudioBuilder:
 
     def ask_ai(self, message,model=""):
       try:
+            
             if not self.validate_input(message):
 
                   self.msg_event = "Invalid input: Message is required"
@@ -298,7 +300,7 @@ class TemplateSpeechStudioBuilder:
     def generate_audio(self,token,message):
 
 
-
+        
         self.msg_event = "Audio generation started"
         self.status_code = 222
         try:
@@ -381,6 +383,9 @@ class TemplateSpeechStudioBuilder:
     #         return gr.update(choices=available_languages, value=[], visible=True)
     #     else:
     #         return gr.update(choices=available_languages, value=[], visible=False)
+
+
+
     def update_languages(self, category):
    
             if not isinstance(category, str) or not category.strip():
@@ -388,7 +393,6 @@ class TemplateSpeechStudioBuilder:
                return gr.update(choices=[], value=[], visible=False)
          
             available_languages = self.get_filter(FilterModelAI(category=category), "language")
-            
             if available_languages is not None and isinstance(available_languages, list):
                 return gr.update(choices=available_languages, value=[], visible=True)
             else:
@@ -426,7 +430,7 @@ class TemplateSpeechStudioBuilder:
                  
                return gr.update(choices=[], value=[], visible=False)
         self.msg_event = f"Updating models for dialect {dialect}"
-        default_model=self.get_filter(FilterModelAI(category=category,language=language,dialect=dialect),"absolutePath")
+        default_model=self.get_filter(FilterModelAI(category=category,language=language,dialect=dialect),"AbsolutePath")
         if default_model!=None:
                 self.msg_event = f"Updating models for dialect {dialect}"
        
@@ -449,12 +453,14 @@ class TemplateSpeechStudioBuilder:
         self.msg_event = f"Creating app for language {language}"
         print(self.msg_event )
         self.data = data
-        print(self.token)
-        print(data)
+   
+       
+        # print(self.token)
+        # print(data)
         with gr.Column() as service_dashboard:
-            createchat(self)
-            #print(data)
-
+         
+       
+                 demo = create_chatbot_app(self)
 
 
         return service_dashboard
