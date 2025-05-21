@@ -58,7 +58,7 @@ def update_menu(base_url, token):
 with gr.Blocks() as demo:
     gr.Markdown("## 🔑 Enter Server Base URL and Token (optional)")
     with gr.Row():
-        base_url_input = gr.Textbox(label="Server Base URL", value="https://d45a97cd4dac8173ff.gradio.live", max_lines=1)
+        base_url_input = gr.Textbox(label="Server Base URL", value="https://modelspeech-sy6y.onrender.com", max_lines=1)
         token_input = gr.Textbox(label="Token", placeholder="Enter your token here (optional)", max_lines=1)
     menu_html = gr.HTML()
     
