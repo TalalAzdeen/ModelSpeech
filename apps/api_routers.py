@@ -8,6 +8,6 @@ isDev=True
 APIS=[
   
   (create_api(TemplateSpeechStudioBuilder,isDev),'/user'),
-  (create_api(TemplateTextToTextStudioBuilder,isDev),'/textstudiorouter')
+  (create_api(TemplateTextToTextStudioBuilder,isDev),'/textstudiorouter'),
   (create_api(TemplateTextToSpeechStudioBuilder,isDev),'/Speechtudiorouter')
 ]
