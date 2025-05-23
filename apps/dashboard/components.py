@@ -159,41 +159,44 @@ def BarServiceCard(data, labels=None, titel="Bar Service", type_chart="bar"):
 
 
 def create_ConfigProvider(builder):
-
+   progress_items = [
+        { "name": "Number of Used Requests", "percent": 30, "status": "active" },
+        { "name": "Number of Services", "percent": 50, "status": "active" },
+        { "name": "Number of Used Spaces", "percent": 70, "status": "active" },
+ 
+       
+     
+                   ]
+   progress_itemss = [
+        
+        { "name": "Number of Used Spaces", "percent": 100, "steps": 5, "stroke_color": "#f56a00" },
+        { "name": "Number of Services", "percent": 60, "steps": 5, "stroke_color": ["#f56a00", "#1890ff", "#13c2c2"] }
+                   ]
    with ms.Application():
         with antd.ConfigProvider():
             with antd.Flex(gap="small", vertical=True):
-                
-                antd.Progress(percent=30,status='active')
-                antd.Progress(percent=50, status='active')
-                antd.Progress(percent=70, status='active')
-                antd.Progress(percent=100,status='active')
+                # Iterate through the list and access the 'name' from each dictionary
+                for item in progress_items:
+                    antd.Typography.Text(item["name"])
+                # You might want to display the progress bars here as well,
+                # associating them with their names.
+                # For example, iterate again or combine the loops if the structure allows.
+                # For demonstration, let's add the first few progress bars
+                    antd.Progress(
+                        
+                        
+                        percent=item["percent"],status='active')
                
-            # antd.Divider("Circular progress bar")
-            # with antd.Flex(gap="small", wrap=True):
-            #     antd.Progress(type="circle", percent=75)
-            #     antd.Progress(type="circle", percent=70, status="exception")
-            #     antd.Progress(type="circle", percent=100)
-            #     antd.Progress(
-            #         type="circle",
-            #         percent=100,
-            #         format=
-            #         """( percent ) => percent === 100 ? 'Done' : percent + '%' """
-            #     )
-            # antd.Divider("Progress bar with steps")
+             
+
             with antd.Flex(gap="small", vertical=True):
-                antd.Progress(percent=50, steps=3)
-                antd.Progress(percent=30, steps=5)
-                antd.Progress(percent=100,
-                              steps=5,
-                              size="small",
-                              stroke_color='#f56a00')
-                antd.Progress(percent=60,
-                              steps=5,
+                # Assuming these progress bars are generic examples or tied to the list later
+                for item in progress_itemss:
+                    antd.Typography.Text(item["name"])
+               
+                    antd.Progress(percent=item["percent"],
+                              steps=item["steps"],
                               stroke_color=['#f56a00', '#1890ff', '#13c2c2'])
-
-
-
 
 
 
@@ -467,4 +470,47 @@ def create_section_by_all_services(builder, labels):
             panel5 = BarServiceCard(data, labels_servs, type_chart="bar")
     except Exception as e:
         print(f"Error in create_section_by_all_services: {str(e)}")
-#
+def createPlotCardRequestUpdate(data, labels, type_chart="bar"):
+    try:
+        if type_chart == "bar":
+            return gr.BarPlot(
+                value=data,
+                x=labels["x"],
+                y=labels["y"],
+                
+                title="Update Duration per Request"
+            )
+        else:
+            return gr.LinePlot(
+                value=data,
+                x=labels["x"],
+                y=labels["y"],
+               
+                title="Update Duration per Request"
+            )
+    except Exception as e:
+        print(f"Error in createPlotCard: {str(e)}")
+        return gr.Markdown(f"⚠️ Error generating chart: {e}")
+
+ 
+def Request_Update(self, labels=""): 
+    data, labels = self.get_request_update()
+
+    with gr.Blocks() as panel:
+        with gr.Row():  # ✅ استخدم gr.Row لتقسيم الأعمدة بجانب بعض
+            with gr.Column(scale=2):  # العمود الأول
+                with gr.Accordion("Request Update Duration", open=True):
+                    chart_type = gr.Radio(["bar", "line"], value="line", label="Chart Type")
+                    chart_plot = createPlotCardRequestUpdate(data, labels, chart_type.value)
+
+                    chart_type.change(
+                        fn=lambda ctype: createPlotCardRequestUpdate(data, labels, ctype),
+                        inputs=chart_type,
+                        outputs=chart_plot
+                    )
+
+            with gr.Column(scale=1):  # العمود الثاني
+                create_ConfigProvider(self)
+
+    return panel
+

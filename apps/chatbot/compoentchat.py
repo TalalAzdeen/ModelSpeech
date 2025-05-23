@@ -164,7 +164,7 @@ def create_chatbot_app(builderobj=None, lg="en"):
     def menu_studio(builder, lg="en"):
           m_category = []
           fist_categary = []
-          type_server_pige = "Chat"
+          type_server_pige ="Text-to-Speech"
           
           if builder.Isdiv == False:
               m_category = builder.get_filter(FilterModelAI(Type=type_server_pige), "category")

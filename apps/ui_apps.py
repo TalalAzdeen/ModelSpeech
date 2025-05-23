@@ -1,3 +1,4 @@
+from pickle import FALSE
 from AppUI import create_app
 from .chatbot.templates  import TemplateSpeechStudioBuilder
 from .space.templates  import TemplateSpacePlatformBuilder
@@ -8,8 +9,13 @@ isDev=True
 
 
 APPS=[ 
-  (create_app(TemplateSpeechStudioBuilder,isDev),'chatbot'),
+
+  (create_app(TamplateDashBuilder,isDev),'dashboard'),
+ 
   (create_app(TemplateTextToTextBuilder,isDev),'t2text'),
+
+
+   (create_app(TemplateSpeechStudioBuilder,isDev),'chatbot'),
   (create_app(TemplateTextToTextStudioBuilder,isDev),'studio-t2text'),
 
 
@@ -26,7 +32,7 @@ APPS=[
 
   
   (create_app(TemplateSpacePlatformBuilder,isDev),'createspace'),
-  (create_app(TamplateDashBuilder,isDev),'dashboard'),
+
 
   
 

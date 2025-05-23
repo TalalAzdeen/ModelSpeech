@@ -9,7 +9,7 @@ class DashAPI:
         """
         self.base_url = base_url
         self.headers = {
-            "Authorization": f"{token}" if token else "",
+            "Authorization": f"Bearer {token}" ,
             "Content-Type": "application/json"
         }
 

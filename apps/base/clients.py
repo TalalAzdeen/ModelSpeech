@@ -104,19 +104,19 @@ class SpeechStudioAPI:
             print(f"Error initializing builder: {e}")
             raise
 
-    def get_filtered_models(self, name=None, category=None, language=None, isStandard=None, gender=None, dialect=None, Type="t2speech"):
+    def get_filtered_models(self, payload):
         print("Sending request to GetFilterModel2 API...")
     
         url = f"{self.base_url}/api/v1/user/ModelAi/GetFilterModel"
-        payload = {
-            "name": name,
-            "category":category,
-            "language": language,
-            "isStandard": isStandard,
-            "gender": gender,
-            "dialect": dialect,
-            "type":Type
-        }
+        # payload = {
+        #     "name": name,
+        #     "category":category,
+        #     "language": language,
+        #     "isStandard": isStandard,
+        #     "gender": gender,
+        #     "dialect": dialect,
+        #     "type":Type
+        # }
         return self._post_request(url, payload)
 
     def get_data_by_type(self, typee):

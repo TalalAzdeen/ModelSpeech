@@ -63,7 +63,7 @@ class BuilderRequest:
           
           # Find the matching service
           for service in services:
-              if service.get('AbsolutePath') == service_name:
+              if service.get('modelAi') == service_name:
                   return {
                       "question": "string",
                       "spaceid": spaces['Id'],
@@ -247,7 +247,17 @@ class BuilderStudioModelAiAPi:
 
         if not self.DataModels:
             try:
-                result = self.Builder.get_filtered_models()
+
+                payload = {
+                        "name":FilterModelAI.name,
+                        "category":FilterModelAI.category,
+                        "language": FilterModelAI.language,
+                        "isStandard": FilterModelAI.isStandard,
+                        "gender": FilterModelAI.gender,
+                        "dialect": FilterModelAI.dialect,
+                        "type":FilterModelAI.Type
+                    }
+                result = self.Builder.get_filtered_models(payload)
                 
                 print(result)
 

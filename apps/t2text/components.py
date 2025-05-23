@@ -81,6 +81,10 @@ import gradio as gr
 from gradio_client import Client
 import pandas as pd
 from random import randint
+import modelscope_studio.components.antd as antd
+import modelscope_studio.components.antdx as antdx
+import modelscope_studio.components.base as ms
+import modelscope_studio.components.pro as pro
 import plotly.express as px
 import time
 from .models import *
@@ -91,7 +95,10 @@ def get_categories(builder, type_name,type_name_dev):
         return [], None
 
     if builder.Isdiv is False:
+
         categories = builder.get_filter(FilterModelAI(Type=type_name), "category")
+        if categories==None:
+           return [],None 
     else:
         
         categories = builder.builder.get_property(type_name_dev)
@@ -119,7 +126,7 @@ def createTextToText(builder, lg="en"):
         #    fist_categary=m_category[0]
          
         #m_category=None
-        m_category,fist_categary=get_categories(builder,type_name="chat",type_name_dev="category")
+        m_category,fist_categary=get_categories(builder,type_name="Text-to-Speech",type_name_dev="category")
         # type_server_pige="Chat"
         current_language = lg
 
@@ -216,20 +223,145 @@ def createTextToText(builder, lg="en"):
 
     except Exception as e:
         print(f"An error occurred: {e}")
+DEFAULT_THEME = {
+    "token": {
+        "colorPrimary": "rgba(11, 186, 131, 1)",
+    }
+
+}
+DEFAULT_SUGGESTIONS = [{
+    "label":
+    'Make a plan',
+    "value":
+    "Make a plan",
+    "children": [{
+        "label": "Start a business",
+        "value": "Help me with a plan to start a business"
+    }, {
+        "label": "Achieve my goals",
+        "value": "Help me with a plan to achieve my goals"
+    }, {
+        "label": "Successful interview",
+        "value": "Help me with a plan for a successful interview"
+    }]
+}, {
+    "label":
+    'Help me write',
+    "value":
+    "Help me write",
+    "children": [{
+        "label": "Story with a twist ending",
+        "value": "Help me write a story with a twist ending"
+    }, {
+        "label": "Blog post on mental health",
+        "value": "Help me write a blog post on mental health"
+    }, {
+        "label": "Letter to my future self",
+        "value": "Help me write a letter to my future self"
+    }]
+}]
+
+DEFAULT_LOCALE = 'en_US'
+
+# def create_t2text(builder, current_language="en"):
+#     try:
+#         m_category, first_category = get_categories(
+#             builder, type_name="Text-to-Speech", type_name_dev="AbsolutePath"
+#         )
+
+#         with ms.Application(), antdx.XProvider(theme=DEFAULT_THEME, locale=DEFAULT_LOCALE), ms.AutoLoading():
+#             with antd.Row(gutter=[20, 20], wrap=False, elem_id="t2text"):
+#                 # Left Column (Inputs)
+#                 with antd.Col(md=dict(flex="0 0 340px", span=24, order=0),
+#                               span=0, order=1, elem_classes="t2text-controls"):
+#                     with antd.Flex(vertical=True, gap="small", elem_style=dict(height="100%")):
+#                         antd.Typography.Title("🎙 Text-to-Speech", level=4)
+
+#                         # Model dropdown
+#                         model_name = antd.Select(
+#                             options=[{"label": m, "value": m} for m in m_category],
+#                             default_value=first_category,
+#                             elem_style={"width": "100%"},
+#                             allow_clear=False
+#                         )
+
+#                         # Text input box
+#                         text_input = pro.MultimodalInput(
+#                             placeholder=LANGUAGESTEXT[current_language]["enter_message"],
+#                             upload_config=MultimodalInputUploadConfig(
+#                                 upload_button_tooltip="Upload",
+#                                 allow_speech=True,
+#                                 allow_paste_file=True,
+#                                 max_count=3,
+#                                 multiple=False
+#                             )
+#                         )
+
+#                         # Temperature (rate) slider
+#                         rate_slider = antd.Slider(
+#                             min=0.1, max=1.0, step=0.1,
+#                             default_value=0.8,
+#                             tooltip={"open": True},
+#                             label=LANGUAGESTEXT[current_language]["temperature"]
+#                         )
+
+#                         # Max token (duration) slider
+#                         duration_slider = antd.Slider(
+#                             min=0.1, max=5.0, step=0.1,
+#                             default_value=1.0,
+#                             tooltip={"open": True},
+#                             label=LANGUAGESTEXT[current_language]["max_token"]
+#                         )
+
+#                         # Streaming toggle
+#                         streaming_toggle = antd.Switch(
+#                             default_checked=True,
+#                             label=LANGUAGESTEXT[current_language]["streaming"]
+#                         )
+
+#                         # Submit Button
+#                         submit_button = antd.Button(
+#                             "🔊 Convert",
+#                             type="primary",
+#                             block=True
+#                         )
+
+#                 # Right Column (Output)
+#                 with antd.Col(flex=1, elem_style=dict(height="100%")):
+#                     with antd.Flex(vertical=True, gap="middle"):
+#                         html = gr.HTML(bodyicon)
+
+#                         output_text = antd.Textarea(
+#                             disabled=True,
+#                             auto_size=True,
+#                             placeholder=LANGUAGESTEXT[current_language]["output"]
+#                         )
+
+#             # Event binding
+#             submit_button.click(
+#                 fn=builder.bot,
+#                 inputs=[
+#                     text_input,
+#                     model_name,
+#                     rate_slider,
+#                     duration_slider,
+#                     streaming_toggle
+#                 ],
+#                 outputs=[text_input, output_text, html]
+#             )
+
+#     except Exception as e:
+#         print(f"Error in create_t2text: {str(e)}")
+#         return None
+
 def create_t2text(builder,current_language="en"):
     try:
 
-        # type_server_pige="Chat"
-        # #listmodel =builder.builder.get_property("absolutePath")
-        # listmodel=builder.get_filter(FilterModelAI(Type=type_server_pige),"absolutePath")
-        # if listmodel is None:
-        #     frist=None
-        #     listmodel = []
-        #     print(listmodel)
+    
 
-        # else:
-        #     frist=listmodel[0]
-        m_category,fist_categary=get_categories(builder,type_name="chat",type_name_dev="AbsolutePath")
+
+
+        m_category,fist_categary=get_categories(builder,type_name="Text-to-Speech",type_name_dev="AbsolutePath")
      
         with gr.Row():
             with gr.Column():

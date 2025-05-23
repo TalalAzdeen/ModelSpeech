@@ -9,7 +9,16 @@ import plotly.express as px
 import time
 from typing import Optional, Text
 from .components import *
+import modelscope_studio.components.antd as antd
+import modelscope_studio.components.base as ms
+Style = """
+    <style>
+      :root {
+    --name: default;
 
+    --primary-500: rgba(11, 186, 131, 1);
+    }
+    """
 class TamplateDashBuilder:
     __translation__ = {}
 
@@ -111,7 +120,23 @@ class TamplateDashBuilder:
 
         except Exception as e:
             print(f"Failed to fetch and plot service usage data: {e}")
+    def get_request_update(self):
 
+          data = pd.DataFrame([
+                    { "RequestId": "req_1", "UpdateDurationMs": 450 },
+                    { "RequestId": "req_2", "UpdateDurationMs": 1200 },
+                    { "RequestId": "req_3", "UpdateDurationMs": 800 },
+                    { "RequestId": "req_4", "UpdateDurationMs": 2500 },
+                    { "RequestId": "req_5", "UpdateDurationMs": 1750 }
+                ])
+
+# تسميات الأعمدة
+          labels = {
+                "x": "RequestId",
+                "y": "UpdateDurationMs",
+                "Type": "RequestId"  # نستخدمه كـ color فقط ليظهر كل شريط بلون مختلف
+            }
+          return data,labels
     def ge_by_filter(self, start, end):
         print(f"Fetching data by filter from {start} to {end}...")
         try:
@@ -119,20 +144,50 @@ class TamplateDashBuilder:
         except Exception as e:
             print(f"Failed to fetch filtered data: {e}")
 
-
-
     def createapp(self, data=None, language="en"):
         print("Creating the dashboard app...")
         try:
             labels = TRANSLATIONS[language]
             gr.HTML(Style)
+            
             with gr.Column() as service_dashboard:
-                create_section_state(self, labels)
+              with ms.Application():
+                    with antd.ConfigProvider():
+                         
+                        antd.Divider("", elem_style=dict(borderColor='#7cb305'))
+                        create_section_state(self, labels)
+                        antd.Divider("", elem_style=dict(borderColor='#7cb305'))
+                     
+                        create_section_bytime(self, labels)
+                        # with antd.Divider(elem_style=dict(borderColor='#7cb305'),
+                        #                   variant="dashed"):
+                        antd.Divider("", elem_style=dict(borderColor='#7cb305'))
+                        Request_Update(self)
+                        antd.Divider("", elem_style=dict(borderColor='#7cb305'))
+                        create_section_by_all_services(self, labels)
+               
 
-                create_section_bytime(self, labels)
-                create_section_by_all_services(self, labels)
+              
+                
             print("Dashboard app created successfully.")
             return service_dashboard
         except Exception as e:
             print(f"Failed to create dashboard app: {e}")
             raise
+      
+    # def createapp(self, data=None, language="en"):
+    #     print("Creating the dashboard app...")
+    #     try:
+    #         labels = TRANSLATIONS[language]
+    #         gr.HTML(Style)
+    #         with gr.Column() as service_dashboard:
+    #             create_section_state(self, labels)
+
+    #             create_section_bytime(self, labels)
+    #             Request_Update(self)
+    #             create_section_by_all_services(self, labels)
+    #         print("Dashboard app created successfully.")
+    #         return service_dashboard
+    #     except Exception as e:
+    #         print(f"Failed to create dashboard app: {e}")
+    #         raise
