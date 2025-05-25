@@ -126,7 +126,8 @@ def createTextToText(builder, lg="en"):
         #    fist_categary=m_category[0]
          
         #m_category=None
-        m_category,fist_categary=get_categories(builder,type_name="Text-to-Speech",type_name_dev="category")
+        m_category,fist_categary=get_categories(builder,type_name=TextStudioSetting.NameMode,type_name_dev=TextStudioSetting.StartModel)
+        #m_category,fist_categary=get_categories(builder,type_name="Text-to-Speech",type_name_dev="category")
         # type_server_pige="Chat"
         current_language = lg
 
@@ -360,8 +361,8 @@ def create_t2text(builder,current_language="en"):
     
 
 
-
-        m_category,fist_categary=get_categories(builder,type_name="Text-to-Speech",type_name_dev="AbsolutePath")
+        
+        m_category,fist_categary=get_categories(builder,type_name=TextbuilderSetting.NameMode,type_name_dev=TextbuilderSetting.StartModel)
      
         with gr.Row():
             with gr.Column():

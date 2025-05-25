@@ -1,0 +1,1202 @@
+--- Start of file: __init__.py ---
+
+--- End of file: __init__.py ---
+
+--- Start of file: builders.py ---
+import pandas as pd
+from random import randint
+from .clients import *
+from typing import List
+ 
+from .seeds import  *
+class BuilderDashAPI:
+    def __init__(self, url, token, isDev=False) -> None:
+        self.api = DashAPI(url, token)
+        self.isDev = isDev
+
+    def get_data_byservices(self):
+        data = self.api.get_service_usage_data()
+        labels = []
+        values = []
+        for i in data:
+            labels.append(i["name"])
+            values.append(i["usageCount"])
+        return values, labels
+
+    def get_model_ai_service_requests(self):
+        data = self.api.get_model_ai_service_requests()
+        labels = []
+        values = []
+        for i in data:
+            labels.append(i["modelAi"])
+            values.append(i["usageCount"])
+        return values, labels
+
+
+
+
+
+
+    def post_service_requests(self, request_data):
+        request_data = {
+                        "serviceType": "12345",
+                        "dateTime": "67890",
+                        "dateTimeFilter": "2025-03-01",
+
+                      }
+        return self.api.post_service_requests(request_data)
+
+    def get_service_users_count(self):
+        data = self.api.get_service_users_count()
+        labels = []
+        values = []
+        for i in data:
+            labels.append(i["serviceType"])
+            values.append(i["count"])
+        return values, labels
+
+    # def  get_service_usage_and_remaining_plot(self):
+    #       data=self.get_service_usage_and_remaining()
+    #       transformed_data = []
+    #       for item in data:
+    #         transformed_data.append({"value": item["usageCount"], "TypeData": "requests", "service_type": item["name"]})
+    #         transformed_data.append({"value": item["remaining"], "TypeData": "remaining", "service_type": item["name"]})
+
+
+
+    #       labels_servs = {
+    #                   "label_dropdown":"Type Service",
+    #                   "Type": "TypeData",
+    #                   "x": "value",
+    #                   "y": "service_type"
+    #               }
+    #       return pd.DataFrame(transformed_data),labels_servs
+    def get_service_usage_and_remaining_plot(self):
+        try:
+            data =self.api.get_service_usage_and_remaining()
+            transformed_data = []
+            for item in data:
+                #transformed_data.append({"value": item["usageCount"], "TypeData": "requests", "service_type": item["name"]})
+                transformed_data.append({"value":randint(5, 1000), "TypeData": "requests", "service_type": item["name"]})
+                transformed_data.append({"value": item["remaining"], "TypeData": "remaining", "service_type": item["name"]})
+                transformed_data.append({"value":randint(5, 100), "TypeData": "errors", "service_type": item["name"]})
+
+            labels_servs = {
+                "label_dropdown": "Type Service",
+                "Type": "TypeData",
+                "x": "value",
+                "y": "service_type"
+            }
+            return pd.DataFrame(transformed_data), labels_servs
+        except Exception as e:
+            print(f"Error in get_service_usage_and_remaining_plot: {str(e)}")
+            return pd.DataFrame(), {}  # إرجاع DataFrame فارغ وقاموس فارغ في حالة حدوث خطأ
+
+
+    def get_service_usage_and_remaining(self):
+        data = self.api.get_service_usage_and_remaining()
+        labels = []
+        values = []
+        remainings=[]
+        for i in data:
+            labels.append(i["name"])
+            values.append(i["usageCount"])
+            remainings.append(i["remaining"])
+        return values, labels,remainings
+
+
+
+
+
+    def get_model_name_request_bytimee(self, serviceType="all", start="2025-02-14T23:07:29.795Z", end="2025-03-05T23:07:29.795Z", time="None"):
+                  dataA = {
+                      "serviceType": serviceType,
+                      "startDate": start,
+                      "endDate": end,
+                      "dateTimeFilter":time
+                  }
+
+
+                  data = self.api.post_service_requests(dataA)
+
+
+                  print(f"  data  : {data}")
+
+
+                  if not isinstance(data, list):
+                      #print("Unexpected data format:", data)
+                      return pd.DataFrame(),[]
+
+                  if not data:  # التحقق مما إذا كانت القائمة فارغة
+                      print("No data received.")
+                      return pd.DataFrame(),[]
+
+                  print("Data received successfully.")
+
+
+                  transformed_data = []
+                  for item in data:
+
+                        transformed_data.append({"value":item["value"], "TypeData": item["typeData"], "service_type": item["serviceType"]})
+                        #transformed_data.append({"value": item["value"], "TypeData": "remaining", "service_type": item["name"]})
+                        #transformed_data.append({"value":randint(5, 100), "TypeData": "errors", "service_type": item["name"]})
+
+                      #if isinstance(entry, dict) and 'time' in entry:
+                          #entry['time'] = pd.to_datetime(entry['time'])
+                      #else:
+                          #print(f"Skipping invalid entry: {entry}")
+
+
+
+                  df = pd.DataFrame(transformed_data)
+                  #df["time"]=pd.date_range("2025-01-01", end="2025-01-05", periods=len(df))
+
+
+
+                  #df["time"]=pd.date_range("2025-01-01", end="2025-01-05", periods=len(df))
+                  #df['requests'] = df['requests'].astype(int)
+                  #df['errors'] = df['errors'].astype(int)
+
+                  #df["time"]=pd.date_range("2025-01-01", end="2025-01-05", periods=len(df))
+                  #df['requests'] = [randint(5, 20) for _ in range(len(df))]
+                  #df['errors'] = [randint(0, 3) for _ in range(len(df))]
+
+
+                  # if 'serviceType' in df.columns:
+                  #     df['service_type'] = df['serviceType']
+                  #     df.drop(columns=['serviceType'], inplace=True)
+
+
+                  labels_service = {
+                      "label_dropdown": "Type Service",
+                      "Type": "service_type",
+                      "x": "time",
+                      "y":"requests"
+                  }
+
+                  return df, labels_service
+    def get_model_name_request_bytime(self, serviceType="all", start="2025-02-14T23:07:29.795Z", end="2025-03-05T23:07:29.795Z", time="None"):
+                  dataA = {
+                      "serviceType": serviceType,
+                      "startDate": start,
+                      "endDate": end,
+                      "dateTimeFilter":time
+                  }
+
+
+                  data = self.api.GetRequestsByDatetime(None)
+
+
+                  print(f"  data  : {data}")
+
+
+                  if not isinstance(data, list):
+                      #print("Unexpected data format:", data)
+                      return pd.DataFrame(),[]
+
+                  if not data:  # التحقق مما إذا كانت القائمة فارغة
+                      print("No data received.")
+                      return pd.DataFrame(),[]
+
+                  print("Data received successfully.")
+
+                 
+
+
+
+                   
+
+                  df = pd.DataFrame(data)
+                  df.rename(columns={'dateTime': 'time'}, inplace=True)
+                  df.rename(columns={'name': 'service_type'}, inplace=True)
+
+                  #df["time"]=
+                  df["time"]=pd.date_range("2025-01-01", end="2025-01-05", periods=len(df))
+                  df['requests'] = df['requests'].astype(int)
+                  df['errors'] = df['errors'].astype(int)
+                                    
+
+
+
+
+
+                  #df['requests'] = df['requests'].astype(int)
+                  #df['errors'] = df['errors'].astype(int)
+
+                  #df["time"]=pd.date_range("2025-01-01", end="2025-01-05", periods=len(df))
+                  #df['requests'] = [randint(5, 20) for _ in range(len(df))]
+                  #df['errors'] = [randint(0, 3) for _ in range(len(df))]
+
+                  # if 'dateTime' in df.columns:
+                  #       df['time'] = df['dateTime']
+                  #       df.drop(columns=['time'], inplace=True)
+                  # else :
+                  #       df['time'] = df['dateTime']
+                  #       df.drop(columns=['time'], inplace=True)
+                 
+                  # if 'serviceType' in df.columns:
+                  #       df['service_type'] = df['name']
+                  #       df.drop(columns=['serviceType'], inplace=True)
+
+
+                  labels_service = {
+                      "label_dropdown":"Type Service",
+                      "Type":"serviceType",
+                      "x": "time",
+                      "y": "requests"
+                  } 
+
+                  return df, labels_service
+      
+
+
+
+
+
+    def get_space_requests(self):
+        data = self.api.get_space_requests()
+        labels = []
+        values = []
+        for i in data:
+            #labels.append(i["name"])
+            labels.append(f"space{i}")
+            values.append(i["usageCount"])
+        return values, labels
+
+--- End of file: builders.py ---
+
+--- Start of file: data.py ---
+TRANSLATIONS = {
+    "ar": {
+        "start_date": "تاريخ البدء",
+        "end_date": "تاريخ الانتهاء",
+        "apply_btn": "تطبيق الفلتر",
+        "group_by": "تجميع البيانات بواسطة",
+        "aggregation": "طريقة التجميع",
+        "requests_by_time_title": "الطلبات حسب الوقت",
+        "errors_by_time_title": "الأخطاء حسب الوقت",
+        "requests_by_service_title": "الطلبات حسب نوع الخدمة",
+        "total_requests": "إجمالي الطلبات في الخطة الحالية",
+        "remaining_requests": "الطلبات المتبقية",
+        "none": "لا شيء",
+        "30m": "30 دقيقة",
+        "1h": "ساعة",
+        "4h": "4 ساعات",
+        "1d": "يوم",
+        "requests_by_service": "الطلبات حسب نوع الخدمة",
+        "errors_by_service": "الأخطاء حسب نوع الخدمة",
+        "PlanRequestsVisualization":"أحصائية الخطة "
+    },
+    "en": {
+        "start_date": "Start Date",
+        "end_date": "End Date",
+        "apply_btn": "Apply Filter",
+        "group_by": "Group Data By",
+        "aggregation": "Select Aggregation Method",
+        "requests_by_time_title": "Requests Over Time",
+        "errors_by_time_title": "Errors Over Time",
+        "requests_by_service_title": "Requests by Service Type Over Time",
+        "total_requests": "Total Requests in Current Plan",
+        "remaining_requests": "Remaining Requests",
+        "none": "None",
+        "30m": "30 minutes",
+        "1h": "1 hour",
+        "4h": "4 hours",
+        "1d": "1 day",
+        "requests_by_service": "Requests by Service Type",
+        "errors_by_service": "Errors by Service Type",
+        "PlanRequestsVisualization": "Plan  Visualization"
+    }
+}
+--- End of file: data.py ---
+
+--- Start of file: seeds.py ---
+import pandas as pd
+from random import randint
+ 
+from typing import List
+ 
+class  BuilderDashAPISeed:
+    def __init__(self) -> None:
+        pass
+
+    def  get_data_byservices(self):
+         labels =  ["Text to Speech", "Text to Dialect", "Speech to Speech"]
+         values = [100, 200 ,200 ]
+
+
+
+
+         return values,labels
+    def  get_model_ai_service_requests(self):
+         labels =  ["Text to Speech", "Text to Dialect", "Speech to Speech"]
+         values = [100, 200 ,200 ]
+         return values,labels
+    def  get_service_usage_and_remaining(self):
+         labels =  ["Text to Speech", "Text to Dialect", "Speech to Speech"]
+         values = [100, 200 ,200 ]
+         return values,labels
+    def  get_service_users_count(self):
+         labels =  ["Text to Speech", "Text to Dialect", "Speech to Speech"]
+         values = [100, 200 ,200 ]
+         return values,labels
+
+    def  get_data_byplan(self):
+
+        return self.get_data_byservices()
+
+    def  get_stateerrors(self):
+       return service_data
+
+    def  get_staterequests(self):
+        return service_data
+    def  get_model_name_request_bytime(self,serviceType="all", start="2025-03-06T22:26:34.259Z", end=None, time=None):
+        service_dataa = pd.DataFrame(
+            {
+                "time": pd.date_range("2025-01-01", end="2025-01-05", periods=10),  # Changed periods to 10
+                "requests": [randint(5, 20) for i in range(10)],
+                "errors": [randint(0, 3) for i in range(10)],
+                "service_type": ["Text to Speech", "Text to Dialect", "Speech to Speech"] * 3 + ["Text to Speech"],  # Adjusted to match length
+
+            }
+         )
+        labels_service = {
+                "label_dropdown":"Type Service",
+                "Type": "service_type",
+                "x": "time",
+                "y": "requests"
+                }
+        return service_dataa,labels_service
+
+    def  get_data_byplan_services(self):
+
+        service_data_tod = pd.DataFrame(
+          {
+
+          "value": [100,50]*3,
+          "TypeData": ["requests","remaining"]*3,
+          "service_type": ["Text to Speech", "Text to Dialect", "Speech to Speech"]*2 ,
+
+         }
+        )
+        labels_servs = {
+                      "label_dropdown":"Type Service",
+                      "Type": "TypeData",
+                      "x": "value",
+                      "y": "service_type"
+                  }
+        return service_data_tod,labels_servs
+    def  get_service_usage_and_remaining_plot(self):
+
+         service_data_tod = pd.DataFrame(
+    {
+      "value": [100,50,5]*3,  # 9 elements
+      "TypeData": ["requests","remaining","errors"]*3, # 9 elements
+      "service_type": ["Text to Speech", "Text to Dialect", "Speech to Speech"]*3 , # 6 elements
+    }
+  )
+
+         labels_servs = {
+                      "label_dropdown":"Type Service",
+                      "Type": "TypeData",
+                      "x": "value",
+                      "y": "service_type"
+                  }
+         return service_data_tod,labels_servs
+
+    def  ge_by_filter(self,start,end):
+        return service_data
+
+
+
+--- End of file: seeds.py ---
+
+--- Start of file: clients.py ---
+import requests
+
+class DashAPI:
+    def __init__(self, base_url, token=None):
+        """
+        Initialize the DashAPI class.
+        :param base_url: The base URL of the API.
+        :param token: Optional token for authentication.
+        """
+        self.base_url = base_url
+        self.headers = {
+            "Authorization": f"Bearer {token}" ,
+            "Content-Type": "application/json"
+        }
+
+    def get_service_usage_data(self):
+        url = f"{self.base_url}/api/v1/user/Dashboard/ServiceUsageData"
+        response = requests.get(url, headers=self.headers)
+        return self._handle_response(response)
+
+    def get_service_users_count(self):
+        url = f"{self.base_url}/api/v1/user/Dashboard/ServiceUsersCount"
+        response = requests.get(url, headers=self.headers)
+        return self._handle_response(response)
+    def GetRequestsByDatetime(self,request_data):
+        url = f"{self.base_url}/api/v1/user/Dashboard/GetRequestsByDatetime"
+        response = requests.get(url, headers=self.headers, json=request_data)
+        print(response.json())
+        return self._handle_response(response)
+
+    def get_service_usage_and_remaining(self):
+        url = f"{self.base_url}/api/v1/user/Dashboard/ServiceUsageAndRemaining"
+        response = requests.get(url, headers=self.headers)
+        return self._handle_response(response)
+    def get_ModelAi_Service_Requests(self):
+        url = f"{self.base_url}/api/v1/user/Dashboard/ModelAiServiceRequests"
+        response = requests.get(url, headers=self.headers)
+        return self._handle_response(response)
+    def post_service_requests(self, request_data):
+        url = f"{self.base_url}/api/v1/user/Dashboard/ServiceRequests"
+        response = requests.post(url, headers=self.headers, json=request_data)
+        return self._handle_response(response)
+
+    def get_model_ai_service_requests(self):
+        url = f"{self.base_url}/api/v1/user/Dashboard/ModelAiServiceRequests"
+        response = requests.get(url, headers=self.headers)
+        return self._handle_response(response)
+
+    def get_space_requests(self):
+        url = f"{self.base_url}/api/v1/user/Dashboard/SpaceRequests"
+        response = requests.get(url, headers=self.headers)
+        return self._handle_response(response)
+
+    def _handle_response(self, response):
+        """
+        Handle the API response.
+        :param response: The response object from requests.
+        :return: The JSON data or error details.
+        """
+        try:
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            return {"error": True, "status_code": response.status_code, "details": str(e)}
+        except requests.exceptions.RequestException as e:
+            return {"error": True, "details": str(e)}
+
+
+
+--- End of file: clients.py ---
+
+--- Start of file: components.py ---
+ 
+
+import gradio as gr
+from gradio_client import Client
+import pandas as pd
+from random import randint
+import plotly.express as px
+import time
+from typing import Optional
+ 
+import modelscope_studio.components.antd as antd
+import modelscope_studio.components.base as ms
+from .data import *
+import pandas as pd
+from random import randint
+import gradio as gr
+import plotly.express as px
+Style = """
+    <style>
+      :root {
+    --name: default;
+
+    --primary-500: rgba(11, 186, 131, 1);
+    }
+    """
+def plot_plan_data_services():
+
+    labels =  ["Text to Speech", "Text to Dialect", "Speech to Speech"]
+    values = [100, 200 ,200 ]
+
+    # إنشاء المخطط باستخدام plotly
+    fig = px.pie(
+        names=labels,
+        values=values,
+        title="Service Usage and Status",
+        hole=0.4,  # مخطط دائري مجوف
+        color_discrete_sequence=["rgba(11, 186, 131, 1)", "#99CCFF","#559CCF"],
+        height=300,
+    )
+    fig.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',  # خلفية الورقة
+        plot_bgcolor='rgba(0,0,0,0)',  # خلفية الرسم
+        font_color='black'  # النص الأسود للوضع العادي (يتغير حسب الوضع الليلي)
+    )
+    return fig
+
+def plot_plan_data():
+    labels = ["Used Requests", "Remaining Requests"]
+    values = [plan_data["current_plan_requests"], plan_data["remaining_requests"]]
+
+    # إنشاء المخطط باستخدام plotly
+    fig = px.pie(
+        names=labels,
+        values=values,
+        title="Plan Requests Distribution",
+        hole=0.4,  # مخطط دائري مجوف
+        color_discrete_sequence=["rgba(11, 186, 131, 1)", "#99CCFF"],
+        height=300,
+    )
+    fig.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',  # خلفية الورقة
+        plot_bgcolor='rgba(0,0,0,0)',  # خلفية الرسم
+        font_color='black'  # النص الأسود للوضع العادي (يتغير حسب الوضع الليلي)
+    )
+    return fig
+
+
+plan_data = {
+    "current_plan_requests": 300,
+    "remaining_requests": 150
+}
+
+service_data = pd.DataFrame(
+    {
+        "time": pd.date_range("2025-01-01", end="2025-01-05", periods=200),
+        "requests": [randint(5, 20) for i in range(200)],
+        "errors": [randint(0, 3) for i in range(200)],
+        "service_type": ["Text to Speech", "Text to Dialect", "Speech to Speech"] * 66 + ["Text to Speech"] * 2,
+
+    }
+)
+service_data_tod = pd.DataFrame(
+    {
+
+        "value": [100,50]*3,
+        "TypeData": ["requests","remaining"]*3,
+        "service_type": ["Text to Speech", "Text to Dialect", "Speech to Speech"]*2 ,
+
+    }
+)
+import plotly.express as px
+import gradio as gr
+
+def change_filter(service_type, data, name_type="Type"):
+    try:
+        print(name_type)
+        if service_type == "all":
+            return data
+        else:
+            return data[data[name_type] == service_type]
+    except Exception as e:
+        print(f"Error in change_filter: {str(e)}")
+        return data  # إرجاع البيانات الأصلية في حالة حدوث خطأ
+
+def createPlotCard(data, labels, type_chart="bar"):
+    try:
+        if type_chart == "bar":
+            return gr.BarPlot(data, x=labels["x"], y=labels["y"], color=labels["Type"])
+        else:
+            return gr.LinePlot(data, x=labels["x"], y=labels["y"], color=labels["Type"])
+    except Exception as e:
+        print(f"Error in createPlotCard: {str(e)}")
+        return None  # في حالة حدوث خطأ، لا يتم إرجاع أي مخطط
+
+def BarServiceCard(data, labels=None, titel="Bar Service", type_chart="bar"):
+    try:
+        if data is None or data.empty:
+            print("Warning: Data is empty or None in BarServiceCard")
+            return gr.Accordion(titel), None, None
+
+        if labels is None:
+            labels = {
+                "label_dropdown": "Type",
+                "Type": "Type",
+                "x": "x",
+                "y": "y"
+            }
+
+        with gr.Accordion(titel) as panel:
+            dropdownchart = gr.Radio(["bar", "line"], value=type_chart, label="Chart Type")
+
+            if labels["Type"] in data.columns and not data[labels["Type"]].empty:
+                dropdown_choices = ["all"] + list(data[labels["Type"]].unique())
+            else:
+                dropdown_choices = ["all"]
+
+            dropdown = gr.Dropdown(choices=dropdown_choices, label=labels["label_dropdown"])
+
+            dashplot = createPlotCard(data, labels, type_chart)
+
+            dropdown.change(
+                fn=lambda service_type: change_filter(service_type, data, labels["Type"]) if data is not None else None,
+                inputs=dropdown,
+                outputs=dashplot
+            )
+
+            dropdownchart.change(
+                fn=lambda type_chart: createPlotCard(data, labels, dropdownchart) if data is not None else None,
+                inputs=dropdownchart,
+                outputs=dashplot
+            )
+
+        return panel, dashplot, dropdown
+    except Exception as e:
+        print(f"Error in BarServiceCard: {str(e)}")
+        return None, None, None  # في حالة حدوث خطأ، إرجاع عناصر فارغة
+
+
+
+
+def create_ConfigProvider(builder):
+   progress_items = [
+        { "name": "Number of Used Requests", "percent": 30, "status": "active" },
+        { "name": "Number of Services", "percent": 50, "status": "active" },
+        { "name": "Number of Used Spaces", "percent": 70, "status": "active" },
+ 
+       
+     
+                   ]
+   progress_itemss = [
+        
+        { "name": "Number of Used Spaces", "percent": 100, "steps": 5, "stroke_color": "#f56a00" },
+        { "name": "Number of Services", "percent": 60, "steps": 5, "stroke_color": ["#f56a00", "#1890ff", "#13c2c2"] }
+                   ]
+   with ms.Application():
+        with antd.ConfigProvider():
+            with antd.Flex(gap="small", vertical=True):
+                # Iterate through the list and access the 'name' from each dictionary
+                for item in progress_items:
+                    antd.Typography.Text(item["name"])
+                # You might want to display the progress bars here as well,
+                # associating them with their names.
+                # For example, iterate again or combine the loops if the structure allows.
+                # For demonstration, let's add the first few progress bars
+                    antd.Progress(
+                        
+                        
+                        percent=item["percent"],status='active')
+               
+             
+
+            with antd.Flex(gap="small", vertical=True):
+                # Assuming these progress bars are generic examples or tied to the list later
+                for item in progress_itemss:
+                    antd.Typography.Text(item["name"])
+               
+                    antd.Progress(percent=item["percent"],
+                              steps=item["steps"],
+                              stroke_color=['#f56a00', '#1890ff', '#13c2c2'])
+
+
+
+
+
+def plotpie(values, labels, title="Plan Requests Distribution",
+            hole=0.4,
+            color_discrete_sequence=["rgba(11, 186, 131, 1)", "#99CCFF"],
+            height=300):
+    try:
+        fig = px.pie(
+            names=labels,
+            values=values,
+            title=title,
+            hole=hole,
+            color_discrete_sequence=color_discrete_sequence,
+            height=height,
+        )
+        fig.update_layout(
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font_color='black'
+        )
+        return fig
+    except Exception as e:
+        print(f"Error in plotpie: {str(e)}")
+        return None  # إرجاع `None` في حالة حدوث خطأ
+
+
+
+def creatBarplotgroup(data, labels,plot_type="BarPlot"):
+    try:
+        with gr.Row():
+            # مخطط الطلبات
+            
+            if plot_type =="LinePlot":
+                requests_by_time = gr.LinePlot(
+                    data,
+                    x="time",
+                    y="requests",
+                    title=labels["requests_by_time_title"]
+                )
+                errors_by_time = gr.LinePlot(
+                data,
+                x="time",
+                y="errors",
+                title=labels["errors_by_time_title"]
+            )
+            elif plot_type == "BarPlot":
+                  requests_by_time = gr.BarPlot(
+                    data,
+                    x="time",
+                    y="requests",
+                    title=labels["requests_by_time_title"]
+                )
+                  errors_by_time = gr.BarPlot(
+                data,
+                x="time",
+                y="errors",
+                title=labels["errors_by_time_title"]
+            )
+            else:
+                    raise ValueError(f"Unsupported plot type: {plot_type}")
+           
+               
+                
+
+          
+
+        return requests_by_time, errors_by_time
+
+
+
+    except Exception as e:
+        print(f"Error in creatBarplotgroup: {str(e)}")
+        return None, None 
+       
+import gradio as gr
+
+def create_section_state(builder, labels):
+    def check_and_plot(value, label,name ,error_message="البيانات الخاصة بالخدمة غير موجودة أو فارغة."):
+        if not value or not label:
+            raise ValueError(error_message)
+        return plotpie(value, label, labels[name])
+
+    try:
+        with gr.Accordion(labels["PlanRequestsVisualization"]) as plan:
+            with gr.Row():
+                with gr.Column(scale=1):
+                    value, label = builder.get_service_users_count()
+                    data_byservices = check_and_plot(value, label,"total_requests")
+                    plotservice = gr.Plot(data_byservices)
+
+                with gr.Column(scale=1):
+                    value, label = builder.get_model_ai_service_requests()
+                    model_ai_service_requests = check_and_plot(value, label,"remaining_requests")
+                    plotpiereq = gr.Plot(model_ai_service_requests)
+
+                with gr.Column(scale=1):
+                    value, label = builder.get_service_users_count()
+                    service_users_count = check_and_plot(value, label,"total_requests")
+                    gr.Plot(service_users_count)
+                # with gr.Column(scale=1):
+                #     value, label = builder.get_space_requests()
+                #     service_users_count = check_and_plot(value, label,"total_requests")
+                #     gr.Plot(service_users_count)
+
+        return plan
+    except Exception as e:
+        print(f"حدث خطأ: {e}")
+        return f"حدث خطأ أثناء تحميل البيانات: {e}"
+
+options = ["all","Space","Service", "Model"]
+
+
+optionservice=["All","service1", "service2"]
+optionsmodel=["all","Requests", "Errors"]
+
+def show_description(selected_item):
+     if selected_item == "all":
+          return gr.update(visible=False,choices=[])
+     else:
+        return gr.update(visible=True,choices=optionservice)
+
+def create_section_bytime(builder, labels):
+    try:
+
+        with gr.Accordion(labels["apply_btn"]) as panel:
+            try:
+
+
+                with gr.Row():
+                    start = gr.DateTime("2025-01-01 00:00:00", label=labels["start_date"])
+                    end = gr.DateTime("2025-01-05 00:00:00", label=labels["end_date"])
+                    combox_spce = gr.Dropdown(
+                      interactive=True, 
+                      choices=options, 
+                      label="Select from the Space",
+                        
+                      
+                  )
+                    
+
+
+                    combox_services = gr.Dropdown(
+                        choices=options, 
+                        visible=False,
+                        label="Select from the services",
+                        interactive=True,  
+                        
+                    )
+                    combox_models= gr.Dropdown(
+                        choices=options, 
+                        visible=False,
+                        label="Select from the models",
+                        interactive=True,  
+                        
+
+                    )
+               
+                    apply_btn = gr.Button(labels["apply_btn"], scale=0)
+
+                with gr.Row():
+                    group_by = gr.Radio(
+                        [labels["none"], labels["30m"], labels["1h"], labels["4h"], labels["1d"]],
+                        value=labels["none"], label=labels["group_by"]
+                    )
+                    aggregate = gr.Radio(
+                        ["sum", "mean", "median", "min", "max"],
+                        value="sum", label=labels["aggregation"]
+                    )
+            except Exception as e:
+                print(f" Error in creating UI components: {str(e)}")
+
+            try:
+                data, labels_service = builder.get_model_name_request_bytime()
+                print(data)
+
+                requests_by_time, errors_by_time = creatBarplotgroup(data, labels,plot_type="LinePlot")
+
+
+
+                labels_service = {
+                      "label_dropdown": "Type Service",
+                      "Type": "service_type",
+                      "x": "time",
+                      "y": "requests"
+                  }
+                panel, dashplot, dropdowntypeservce = BarServiceCard(data, labels_service, labels["requests_by_time_title"])
+
+                labels_servicee = {
+                      "label_dropdown": "Type Service",
+                      "Type": "service_type",
+                      "x": "time",
+                      "y": "errors"
+                  }
+
+                panel1, dashplot1, dropdowntypeservce1 = BarServiceCard(data, labels_servicee, labels["requests_by_time_title"])
+
+                time_graphs = [requests_by_time, errors_by_time]
+
+
+
+            except Exception as e:
+                print(f" Error in fetching and processing data: {str(e)}")
+
+            def change_group_by(group):
+                try:
+                    return [gr.LinePlot(x_bin=None if group == labels["none"] else group)] * len(time_graphs)
+                except Exception as e:
+                    print(f" Error in change_group_by: {str(e)}")
+                    return time_graphs
+
+            group_by.change(fn=change_group_by, inputs=[group_by], outputs=time_graphs)
+
+            def change_aggregate_by(y_aggregate):
+                try:
+                    return [gr.LinePlot(y_aggregate=y_aggregate)] * len(time_graphs)
+                except Exception as e:
+                    print(f" Error in change_aggregate_by: {str(e)}")
+                    return time_graphs
+
+            aggregate.change(fn=change_aggregate_by, inputs=[aggregate], outputs=time_graphs)
+
+            def rescale(select: gr.SelectData):
+                try:
+                    return select.index
+                except Exception as e:
+                    print(f" Error in rescale: {str(e)}")
+                    return None
+
+            try:
+                rescale_evt = gr.on([plot.select for plot in time_graphs], rescale, None, [start, end])
+            except Exception as e:
+                print(f" Error in rescale event setup: {str(e)}")
+
+            def filter_data(start, end):
+                try:
+                    filtered_data = builder.ge_by_filter(start, end)
+
+                    
+                    return [
+                        gr.LinePlot(filtered_data, x="time", y="errors", title=labels["errors_by_time_title"]),
+                        gr.LinePlot(filtered_data, x="time", y="requests", title=labels["requests_by_time_title"])
+                           ]
+                except Exception as e:
+                    print(f" Error in filter_data: {str(e)}")
+                    return time_graphs
+
+            apply_btn.click(filter_data, inputs=[start, end], outputs=time_graphs)
+            combox_spce.change(show_description, inputs=[combox_spce], outputs=[combox_services])
+            
+
+            try:
+                for trigger in [apply_btn.click, rescale_evt.then]:
+                    trigger(
+                        lambda start, end: [gr.LinePlot(x_lim=[start, end])] * len(time_graphs),
+                        [start, end],
+                        time_graphs
+                    )
+            except Exception as e:
+                print(f" Error in setting event triggers: {str(e)}")
+
+    except Exception as e:
+        print(f" Fatal error in create_section_bytime: {str(e)}")
+
+def create_section_by_all_services(builder, labels):
+    try:
+        with gr.Accordion(labels["requests_by_service"]) as panel2:
+            data, labels_servs = builder.get_service_usage_and_remaining_plot()
+            panel5 = BarServiceCard(data, labels_servs, type_chart="bar")
+    except Exception as e:
+        print(f"Error in create_section_by_all_services: {str(e)}")
+def createPlotCardRequestUpdate(data, labels, type_chart="bar"):
+    try:
+        if type_chart == "bar":
+            return gr.BarPlot(
+                value=data,
+                x=labels["x"],
+                y=labels["y"],
+                
+                title="Update Duration per Request"
+            )
+        else:
+            return gr.LinePlot(
+                value=data,
+                x=labels["x"],
+                y=labels["y"],
+               
+                title="Update Duration per Request"
+            )
+    except Exception as e:
+        print(f"Error in createPlotCard: {str(e)}")
+        return gr.Markdown(f"⚠️ Error generating chart: {e}")
+
+ 
+def Request_Update(self, labels=""): 
+    data, labels = self.get_request_update()
+
+    with gr.Blocks() as panel:
+        with gr.Row():  # ✅ استخدم gr.Row لتقسيم الأعمدة بجانب بعض
+            with gr.Column(scale=2):  # العمود الأول
+                with gr.Accordion("Request Update Duration", open=True):
+                    chart_type = gr.Radio(["bar", "line"], value="line", label="Chart Type")
+                    chart_plot = createPlotCardRequestUpdate(data, labels, chart_type.value)
+
+                    chart_type.change(
+                        fn=lambda ctype: createPlotCardRequestUpdate(data, labels, ctype),
+                        inputs=chart_type,
+                        outputs=chart_plot
+                    )
+
+            with gr.Column(scale=1):  # العمود الثاني
+                create_ConfigProvider(self)
+
+    return panel
+
+
+--- End of file: components.py ---
+
+--- Start of file: templates.py ---
+from .seeds import *
+from .data import *
+from .builders import *
+import gradio as gr
+from gradio_client import Client
+import pandas as pd
+from random import randint
+import plotly.express as px
+import time
+from typing import Optional, Text
+from .components import *
+import modelscope_studio.components.antd as antd
+import modelscope_studio.components.base as ms
+Style = """
+    <style>
+      :root {
+    --name: default;
+
+    --primary-500: rgba(11, 186, 131, 1);
+    }
+    """
+class TamplateDashBuilder:
+    __translation__ = {}
+
+    def __init__(self, url, token, isDev=False) -> None:
+        print("Initializing TamplateDashBuilder...")
+        try:
+            if isDev:
+                self.builder = BuilderDashAPISeed()
+            else:
+                self.builder = BuilderDashAPI(url, token)
+            self.token = token
+            print("Builder initialized successfully.")
+        except Exception as e:
+            print(f"Error initializing builder: {e}")
+            raise
+
+    def get_data_byservices(self):
+        print("Fetching data by services...")
+        try:
+            value, label = self.builder.get_data_byservices()
+            return value, label
+            #return plotpie(value, label)
+        except Exception as e:
+            print(f"Failed to fetch service data: {e}")
+
+    def get_model_ai_service_requests(self):
+        print("Fetching AI service requests...")
+        try:
+            value, label = self.builder.get_model_ai_service_requests()
+            return value, label
+            #return plotpie(value, label)
+        except Exception as e:
+            print(f"Failed to fetch AI service requests: {e}")
+
+    def get_space_requests(self):
+        print("Fetching space requests...")
+        try:
+            return self.builder.get_space_requests()
+        except Exception as e:
+            print(f"Failed to fetch space requests: {e}")
+
+    def get_service_users_count(self):
+        print("Fetching service users count...")
+        try:
+            value, label = self.builder.get_service_users_count()
+            return value, label
+        except Exception as e:
+            print(f"Failed to fetch service users count: {e}")
+
+    def get_service_usage_and_remaining(self):
+        print("Fetching service usage and remaining data...")
+        try:
+            value, label, remaining = self.builder.get_service_usage_and_remaining()
+            return value, label
+            #return plotpie(value, label)
+        except Exception as e:
+            print(f"Failed to fetch service usage data: {e}")
+
+    def get_data_byplan_services(self):
+        print("Fetching data by plan services...")
+        try:
+            return self.builder.get_data_byplan_services()
+        except Exception as e:
+            print(f"Failed to fetch plan services data: {e}")
+
+
+    def get_model_name_request_bytime(self, serviceType="all", start="2025-02-14T23:07:29.795Z", end="2025-03-05T23:07:29.795Z", time="None"):
+        print(f"Fetching model name requests from {start} to {end or 'now'}...")
+        try:
+            return self.builder.get_model_name_request_bytime(serviceType, start, end, time)
+        except Exception as e:
+            print(f"Failed to fetch model requests by time: {e}")
+
+    def post_service_requests(self, request_data):
+        print("Posting service request...")
+        try:
+            return self.builder.post_service_requests(request_data)
+        except Exception as e:
+            print(f"Failed to post service request: {e}")
+
+    def get_staterequests(self):
+        print("Fetching state requests...")
+        try:
+            return self.builder.get_staterequests()
+        except Exception as e:
+            print(f"Failed to fetch state requests: {e}")
+
+    def get_stateerrors(self):
+        print("Fetching state errors...")
+        try:
+            return self.builder.get_stateerrors()
+        except Exception as e:
+            print(f"Failed to fetch state errors: {e}")
+
+    def get_service_usage_and_remaining_plot(self):
+        print("Fetching and plotting service usage and remaining data...")
+        try:
+            return self.builder.get_service_usage_and_remaining_plot()
+
+        except Exception as e:
+            print(f"Failed to fetch and plot service usage data: {e}")
+    def get_request_update(self):
+
+          data = pd.DataFrame([
+                    { "RequestId": "req_1", "UpdateDurationMs": 450 },
+                    { "RequestId": "req_2", "UpdateDurationMs": 1200 },
+                    { "RequestId": "req_3", "UpdateDurationMs": 800 },
+                    { "RequestId": "req_4", "UpdateDurationMs": 2500 },
+                    { "RequestId": "req_5", "UpdateDurationMs": 1750 }
+                ])
+
+# تسميات الأعمدة
+          labels = {
+                "x": "RequestId",
+                "y": "UpdateDurationMs",
+                "Type": "RequestId"  # نستخدمه كـ color فقط ليظهر كل شريط بلون مختلف
+            }
+          return data,labels
+    def ge_by_filter(self, start, end):
+        print(f"Fetching data by filter from {start} to {end}...")
+        try:
+            return self.builder.ge_by_filter(start, end)
+        except Exception as e:
+            print(f"Failed to fetch filtered data: {e}")
+
+    def createapp(self, data=None, language="en"):
+        print("Creating the dashboard app...")
+        try:
+            labels = TRANSLATIONS[language]
+            gr.HTML(Style)
+            
+            with gr.Column() as service_dashboard:
+              with ms.Application():
+                    with antd.ConfigProvider():
+                         
+                        antd.Divider("", elem_style=dict(borderColor='#7cb305'))
+                        create_section_state(self, labels)
+                        antd.Divider("", elem_style=dict(borderColor='#7cb305'))
+                     
+                        create_section_bytime(self, labels)
+                        # with antd.Divider(elem_style=dict(borderColor='#7cb305'),
+                        #                   variant="dashed"):
+                        antd.Divider("", elem_style=dict(borderColor='#7cb305'))
+                        Request_Update(self)
+                        antd.Divider("", elem_style=dict(borderColor='#7cb305'))
+                        create_section_by_all_services(self, labels)
+               
+
+              
+                
+            print("Dashboard app created successfully.")
+            return service_dashboard
+        except Exception as e:
+            print(f"Failed to create dashboard app: {e}")
+            raise
+      
+    # def createapp(self, data=None, language="en"):
+    #     print("Creating the dashboard app...")
+    #     try:
+    #         labels = TRANSLATIONS[language]
+    #         gr.HTML(Style)
+    #         with gr.Column() as service_dashboard:
+    #             create_section_state(self, labels)
+
+    #             create_section_bytime(self, labels)
+    #             Request_Update(self)
+    #             create_section_by_all_services(self, labels)
+    #         print("Dashboard app created successfully.")
+    #         return service_dashboard
+    #     except Exception as e:
+    #         print(f"Failed to create dashboard app: {e}")
+    #         raise
+
+--- End of file: templates.py ---
+

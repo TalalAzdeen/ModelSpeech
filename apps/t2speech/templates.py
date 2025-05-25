@@ -143,7 +143,7 @@ class TemplateTextToSpeechStudioBuilder:
     def send_request(self,data):
     
         try:
-            request = self.builderRequest.send_create_request_quary(data,"studio-t2speech")
+            request = self.builderRequest.send_create_request_quary(data,SpeechStudioSetting.AbsolutePath)
             return request
         except Exception as e:
             
@@ -656,7 +656,7 @@ class TemplateTextToSpeechBuilder:
     def send_request(self,data):
     
         try:
-            request = self.builderRequest.send_create_request_quary(data,"studio-t2speech")
+            request = self.builderRequest.send_create_request_quary(data,SpeechbuilderSetting.AbsolutePath)
             return request
         except Exception as e:
             

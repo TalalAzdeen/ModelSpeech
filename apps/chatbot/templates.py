@@ -145,7 +145,7 @@ class TemplateSpeechStudioBuilder:
     def send_request(self,data):
     
         try:
-            request = self.builderRequest.send_create_request_quary(data,"wasm-speeker")
+            request = self.builderRequest.send_create_request_quary(data,ChatSetting.AbsolutePath)
             return request
         except Exception as e:
             

@@ -1,5 +1,6 @@
 from .data import *
 from .models import *
+from apps.base.models import *
 def create_chatbot_app(builderobj=None, lg="en"):
     import base64
     import os
@@ -167,9 +168,9 @@ def create_chatbot_app(builderobj=None, lg="en"):
           type_server_pige ="Text-to-Speech"
           
           if builder.Isdiv == False:
-              m_category = builder.get_filter(FilterModelAI(Type=type_server_pige), "category")
+              m_category = builder.get_filter(FilterModelAI(Type=ChatSetting.NameMode),ChatSetting.StartModel )
           else:
-              m_category = builder.builder.get_property("category")
+              m_category = builder.builder.get_property(ChatSetting.StartModel)
           
           if m_category is not None and len(m_category) > 0:
               fist_categary = m_category[0]

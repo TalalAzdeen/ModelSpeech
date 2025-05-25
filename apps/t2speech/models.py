@@ -21,3 +21,15 @@ class ModelAiCreate:
     gender: Optional[str] = None
     dialect: Optional[str] = None
     Type: Optional[str] = None
+
+
+
+class SpeechStudioSetting:
+    NameMode="Text-to-Speech"
+    AbsolutePath="wasm-speeker"
+    StartModel="category"
+
+class SpeechbuilderSetting:
+    NameMode="Text-to-Speech"
+    AbsolutePath="wasm-speeker"
+    StartModel="AbsolutePath"

@@ -96,7 +96,7 @@ def get_categories(builder, type_name,type_name_dev):
         return [], None
 
     if builder.Isdiv is False:
-        categories = builder.get_filter(FilterModelAI(Type=type_name), "category")
+        categories = builder.get_filter(FilterModelAI(Type=type_name),type_name_dev)
     else:
         
         categories = builder.builder.get_property(type_name_dev)
@@ -112,7 +112,7 @@ def createTextToSpeech(builder, lg="en"):
         #m_category=builder.get_filter(FilterModelAI(type="Chat"),"category")
       
 
-        m_category,fist_categary=get_categories(builder,type_name="chat",type_name_dev="category")
+        m_category,fist_categary=get_categories(builder,type_name=SpeechStudioSetting.NameMode,type_name_dev=SpeechStudioSetting.StartModel)
         # type_server_pige="Chat"
         # if builder.Isdiv==False:
         #     m_category=builder.get_filter(FilterModelAI(Type=type_server_pige),"category")
@@ -234,7 +234,7 @@ def create_t2speech(builder,current_language="en"):
     try:
 
        
-        m_category,fist_categary=get_categories(builder,type_name="chat",type_name_dev="AbsolutePath")
+        m_category,fist_categary=get_categories(builder,type_name=SpeechbuilderSetting.NameMode,type_name_dev=SpeechbuilderSetting.StartModel)
      
         with gr.Row():
             with gr.Column():

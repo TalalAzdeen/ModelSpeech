@@ -118,7 +118,7 @@ class TemplateTextToTextStudioBuilder:
     def send_request(self,data):
     
         try:
-            request = self.builderRequest.send_create_request_quary(data,"wasm-speeker")
+            request = self.builderRequest.send_create_request_quary(data,TextStudioSetting.AbsolutePath)
             return request
         except Exception as e:
             
@@ -472,7 +472,7 @@ class TemplateTextToTextBuilder:
     def send_request(self,data):
     
         try:
-            request = self.builderRequest.send_create_request_quary(data,"wasm-speeker")
+            request = self.builderRequest.send_create_request_quary(data,TextbuilderSetting.AbsolutePath)
             return request
         except Exception as e:
             
