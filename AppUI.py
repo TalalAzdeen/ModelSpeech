@@ -114,7 +114,7 @@ class AuthSessionBuilder:
             return {'state':AuthSessionState.API_REQUEST_FAILED}
 
 
-        url="https://lahja-api.runasp.net"
+        url="https://lahja-api-v1.runasp.net"
         return {'state':AuthSessionState.SUCCESS,'token':valdata,"urlapi":url,"data":payload.get("Data"),"dataApi":payload.get("Data")}
 
     def send_to_apii(self, url, token):
