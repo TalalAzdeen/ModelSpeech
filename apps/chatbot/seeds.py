@@ -1,4 +1,5 @@
 from .models import *
+from apps.base.models import *
 
 
 LANGUAGES = {
