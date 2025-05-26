@@ -107,7 +107,7 @@ class SpeechStudioAPI:
     def get_filtered_models(self, payload):
         print("Sending request to GetFilterModel2 API...")
     
-        url = f"{self.base_url}/api/v1/user/ModelAi/GetFilterModel"
+        url = f"{self.base_url}/api/v1/user/ModelAi/GetFilterModel?lg=en"
         # payload = {
         #     "name": name,
         #     "category":category,
