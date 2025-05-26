@@ -262,7 +262,7 @@ class BuilderStudioModelAiAPi:
                 print(result)
 
                 if result and result.get("status") == "success"  :
-                    json_data=result['data']['data']
+                    json_data=result['data']
                     fixed_data = fix_json_format(json_data)
                     data_model = DataDynamicModel(fixed_data)
                     transformed_data = data_model.transform_model_data()
