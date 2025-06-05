@@ -10,6 +10,7 @@ import dashboard
 import t2speechmuit
 import userspace
 import menupage
+import dach
 
 
 import audio_interface
