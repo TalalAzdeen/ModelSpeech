@@ -7,906 +7,1060 @@ with gr.Blocks() as demo, ms.Application(), antd.ConfigProvider():
     pro.WebSandbox(
         value={
             "./index.html":
-            """<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+            """ 
+        <!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>روبوت خبير في الأمن السيبراني</title>
+    <title>Requests & Services Statistics Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
-
-        :root {
-            --primary: #3B82F6;
-            --secondary: #2563EB;
-            --accent: #60A5FA;
-            --dark: #1F2937;
-            --light: #F9FAFB;
-            --success: #10B981;
-            --danger: #EF4444;
-            --warning: #F59E0B;
-            --cyber-blue: #1E40AF;
-            --cyber-red: #DC2626;
-            --cyber-green: #059669;
-        }
-
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: #111827;
-            min-height: 100vh;
-            color: white;
-        }
-
-        .cyber-gradient {
-            background: linear-gradient(135deg, var(--cyber-blue) 0%, var(--dark) 100%);
-        }
-
-        .cyber-card {
-            background: rgba(30, 41, 59, 0.8);
-            border-radius: 12px;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .cyber-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
-            border-color: rgba(59, 130, 246, 0.6);
-        }
-
-        .cyber-pulse {
-            animation: cyber-pulse 2s infinite;
-        }
-
-        @keyframes cyber-pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 12px rgba(59, 130, 246, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
-            }
-        }
-
-        .glow-text {
-            text-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
-        }
-
-        .btn-glow {
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-            transition: all 0.3s ease;
-        }
-
-        .btn-glow:hover {
-            box-shadow: 0 0 25px rgba(59, 130, 246, 0.8);
-            transform: translateY(-2px);
-        }
-
-        .cyber-border {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cyber-border::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--cyber-blue), var(--cyber-red));
-        }
-
-        .threat-level-low {
-            border-left: 4px solid var(--success);
-        }
-
-        .threat-level-medium {
-            border-left: 4px solid var(--warning);
-        }
-
-        .threat-level-high {
-            border-left: 4px solid var(--danger);
-        }
-
-        .attack-path {
-            position: relative;
-            padding-left: 20px;
-        }
-
-        .attack-path::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, var(--cyber-red), var(--cyber-blue));
-        }
-
-        .attack-step {
-            position: relative;
-            margin-bottom: 15px;
-            padding-left: 25px;
-        }
-
-        .attack-step::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 8px;
-            width: 12px;
-            height: 12px;
+        .status-dot {
+            height: 10px;
+            width: 10px;
             border-radius: 50%;
-            background-color: var(--cyber-red);
-            border: 2px solid white;
+            display: inline-block;
         }
-
-        .matrix-cell {
-            transition: all 0.3s ease;
+        
+        /* Custom animation for KPIs */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
-
-        .matrix-cell:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-            z-index: 10;
+        .pulse {
+            animation: pulse 2s infinite;
         }
-
-        .network-node {
-            transition: all 0.3s ease;
-        }
-
-        .network-node:hover {
-            transform: scale(1.1);
-            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.7));
-        }
-
-        .cyber-terminal {
-            background-color: #1E293B;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            color: #10B981;
-            padding: 15px;
-            height: 200px;
-            overflow-y: auto;
-        }
-
-        .terminal-command {
-            color: #60A5FA;
-        }
-
-        .terminal-output {
-            color: #E5E7EB;
-        }
-
-        .terminal-prompt {
-            color: #F59E0B;
-        }
-
-        /* Animation for cyber elements */
-        @keyframes cyber-flicker {
-            0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
-                opacity: 1;
-            }
-            20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
-                opacity: 0.4;
-            }
-        }
-
-        .cyber-flicker {
-            animation: cyber-flicker 3s infinite;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .cyber-card {
-                padding: 15px;
-            }
+        
+        /* Sankey diagram placeholder */
+        .sankey-container {
+            height: 300px;
+            background-image: 
+                linear-gradient(90deg, #f0f0f0 1px, transparent 1px),
+                linear-gradient(#f0f0f0 1px, transparent 1px);
+            background-size: 20px 20px;
         }
     </style>
 </head>
-<body class="min-h-screen">
-    <!-- Header -->
-    <header class="cyber-gradient py-6 shadow-lg">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="flex items-center mb-4 md:mb-0">
-                    <div class="cyber-gradient rounded-full p-3 mr-3 shadow-lg btn-glow">
-                        <i class="fas fa-shield-halved text-2xl text-white"></i>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Requests & Services Statistics</h1>
+            <p class="text-gray-600">Dashboard showing historical data and performance metrics</p>
+            <div class="flex items-center mt-2">
+                <span class="status-dot bg-green-500 mr-1"></span>
+                <span class="text-xs text-gray-500">Live data updating every 5 minutes</span>
+            </div>
+        </header>
+
+        <!-- KPIs Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-6">
+            <!-- Total Users KPI -->
+            <div class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-shadow">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total Users</p>
+                        <h2 class="text-2xl font-bold text-blue-600 my-1">15,284</h2>
                     </div>
-                    <h1 class="text-2xl font-bold glow-text">روبوت خبير في الأمن السيبراني</h1>
+                    <div class="bg-blue-100 p-2 rounded-lg">
+                        <i class="fas fa-users text-blue-600"></i>
+                    </div>
                 </div>
-                <div class="flex space-x-3 space-x-reverse">
-                    <button class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg btn-glow">
-                        <i class="fas fa-play mr-2"></i>بدء التحليل
-                    </button>
-                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
-                        <i class="fas fa-cog mr-2"></i>الإعدادات
-                    </button>
+            </div>
+
+            <!-- Total Subscriptions -->
+            <div class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-shadow">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Subscriptions</p>
+                        <h2 class="text-2xl font-bold text-indigo-600 my-1">8,760</h2>
+                    </div>
+                    <div class="bg-indigo-100 p-2 rounded-lg">
+                        <i class="fas fa-id-card text-indigo-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Requests -->
+            <div class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-shadow">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total Requests</p>
+                        <h2 class="text-2xl font-bold text-purple-600 my-1">384M</h2>
+                    </div>
+                    <div class="bg-purple-100 p-2 rounded-lg">
+                        <i class="fas fa-exchange-alt text-purple-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Revenue -->
+            <div class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-shadow">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total Revenue</p>
+                        <h2 class="text-2xl font-bold text-green-600 my-1">$3.1M</h2>
+                    </div>
+                    <div class="bg-green-100 p-2 rounded-lg">
+                        <i class="fas fa-dollar-sign text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total AI Models -->
+            <div class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-shadow">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">AI Models</p>
+                        <h2 class="text-2xl font-bold text-pink-600 my-1">127</h2>
+                    </div>
+                    <div class="bg-pink-100 p-2 rounded-lg">
+                        <i class="fas fa-brain text-pink-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Spaces -->
+            <div class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-shadow">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Spaces</p>
+                        <h2 class="text-2xl font-bold text-orange-600 my-1">2,843</h2>
+                    </div>
+                    <div class="bg-orange-100 p-2 rounded-lg">
+                        <i class="fas fa-cubes text-orange-600"></i>
+                    </div>
                 </div>
             </div>
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
-        <!-- System Overview -->
-        <section class="mb-12">
-            <h2 class="text-xl font-bold mb-6 pb-2 border-b border-gray-700 flex items-center">
-                <i class="fas fa-robot text-cyan-400 mr-2"></i>نظرة عامة على النظام
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Data Collection -->
-                <div class="cyber-card p-6 cyber-border">
-                    <div class="flex items-center mb-4">
-                        <div class="bg-blue-900 rounded-full p-3 mr-3">
-                            <i class="fas fa-database text-blue-300"></i>
-                        </div>
-                        <h3 class="font-bold text-lg">جمع البيانات</h3>
+        <!-- Date Filter -->
+        <div class="bg-white rounded-lg shadow p-4 mb-6 flex flex-wrap items-center justify-between">
+            <div class="flex items-center space-x-2 mb-2 sm:mb-0">
+                <i class="fas fa-calendar text-blue-500"></i>
+                <span class="text-sm font-medium text-gray-700">Time Period:</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <button class="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200">Today</button>
+                <button class="px-3 py-1 text-xs bg-blue-600 text-white rounded-full">Last 7 days</button>
+                <button class="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200">This month</button>
+                <button class="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200">Custom range</button>
+            </div>
+        </div>
+
+        <!-- KPIs Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <!-- Total Requests KPI -->
+            <div class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total Requests</p>
+                        <h2 class="text-3xl font-bold text-blue-600 my-2">24,789</h2>
+                        <p class="text-xs text-green-500 flex items-center">
+                            <i class="fas fa-arrow-up mr-1"></i> 12.5% from last period
+                        </p>
                     </div>
-                    <ul class="space-y-2 text-gray-300">
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            مراقبة حركة المرور على الشبكة
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            جمع سجلات الأنظمة والتطبيقات
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            التقاط الأحداث الأمنية (SIEM)
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            استيراد بيانات من مصادر التهديدات
-                        </li>
-                    </ul>
-                </div>
-                
-                <!-- Data Analysis -->
-                <div class="cyber-card p-6 cyber-border">
-                    <div class="flex items-center mb-4">
-                        <div class="bg-purple-900 rounded-full p-3 mr-3">
-                            <i class="fas fa-chart-line text-purple-300"></i>
-                        </div>
-                        <h3 class="font-bold text-lg">تحليل البيانات</h3>
+                    <div class="bg-blue-100 p-2 rounded-lg">
+                        <i class="fas fa-exchange-alt text-blue-600 text-xl"></i>
                     </div>
-                    <ul class="space-y-2 text-gray-300">
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            تحليل السلوك والشذوذ
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            التصنيف الآلي للتهديدات
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            تحليل الضعف البنيوي
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            نمذجة أنماط الهجوم
-                        </li>
-                    </ul>
-                </div>
-                
-                <!-- Scenario Generation -->
-                <div class="cyber-card p-6 cyber-border">
-                    <div class="flex items-center mb-4">
-                        <div class="bg-red-900 rounded-full p-3 mr-3">
-                            <i class="fas fa-bug text-red-300"></i>
-                        </div>
-                        <h3 class="font-bold text-lg">توليد السيناريوهات</h3>
-                    </div>
-                    <ul class="space-y-2 text-gray-300">
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            محاكاة الهجمات الواقعية
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            نمذجة سلسلة الهجوم (Kill Chain)
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            نماذج MITRE ATT&CK
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            تقارير تقييم المخاطر
-                        </li>
-                    </ul>
-                </div>
-                
-                <!-- Learning & Integration -->
-                <div class="cyber-card p-6 cyber-border">
-                    <div class="flex items-center mb-4">
-                        <div class="bg-green-900 rounded-full p-3 mr-3">
-                            <i class="fas fa-brain text-green-300"></i>
-                        </div>
-                        <h3 class="font-bold text-lg">التعلم والتكامل</h3>
-                    </div>
-                    <ul class="space-y-2 text-gray-300">
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            تحديث النماذج تلقائياً
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            التكامل مع أنظمة الحماية
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            قاعدة معرفية قابلة للتحديث
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-2 text-sm"></i>
-                            استجابات أمنية تلقائية
-                        </li>
-                    </ul>
                 </div>
             </div>
-        </section>
-
-        <!-- Attack Scenario Generation -->
-        <section class="mb-12">
-            <h2 class="text-xl font-bold mb-6 pb-2 border-b border-gray-700 flex items-center">
-                <i class="fas fa-fire text-red-400 mr-2"></i>توليد سيناريوهات الهجوم
-            </h2>
             
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Scenario Controls -->
-                <div class="cyber-card p-6 lg:col-span-1">
-                    <h3 class="font-bold text-lg mb-4 flex items-center">
-                        <i class="fas fa-sliders text-blue-300 mr-2"></i>ضوابط السيناريو
-                    </h3>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1">نوع الهجوم</label>
-                            <select class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm">
-                                <option>اختر نوع الهجوم...</option>
-                                <option>هجوم تصيد (Phishing)</option>
-                                <option>هجوم حقن SQL</option>
-                                <option>هجوم DDoS</option>
-                                <option>هجوم Man-in-the-Middle</option>
-                                <option>هجوم حقن الأكواد</option>
-                                <option>هجوم القوة الغاشمة</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-1">مستوى التعقيد</label>
-                            <div class="flex space-x-2 space-x-reverse">
-                                <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">منخفض</button>
-                                <button class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm">متوسط</button>
-                                <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">عالي</button>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-1">نموذج الهجوم</label>
-                            <select class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm">
-                                <option>MITRE ATT&CK</option>
-                                <option>STRIDE</option>
-                                <option>Kill Chain</option>
-                                <option>نموذج مخصص</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-1">الهدف</label>
-                            <input type="text" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm" placeholder="أدخل الهدف (مثال: خادم ويب)">
-                        </div>
-                        
-                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg btn-glow flex items-center justify-center">
-                            <i class="fas fa-bolt mr-2"></i> توليد السيناريو
+            <!-- Avg Processing Time -->
+            <div class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Avg Processing Time</p>
+                        <h2 class="text-3xl font-bold text-indigo-600 my-2">1.24 <span class="text-sm">seconds</span></h2>
+                        <p class="text-xs text-green-500 flex items-center">
+                            <i class="fas fa-arrow-down mr-1"></i> 23% faster
+                        </p>
+                    </div>
+                    <div class="bg-indigo-100 p-2 rounded-lg">
+                        <i class="fas fa-stopwatch text-indigo-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Success Rate -->
+            <div class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Success Rate</p>
+                        <h2 class="text-3xl font-bold text-green-600 my-2">98.7%</h2>
+                        <p class="text-xs text-red-500 flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-1"></i> 34 failed requests
+                        </p>
+                    </div>
+                    <div class="bg-green-100 p-2 rounded-lg pulse">
+                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Request Status Distribution -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-gray-800">Request Status Distribution</h3>
+                    <div class="flex space-x-2">
+                        <button class="p-1 text-blue-500 hover:bg-blue-50 rounded">
+                            <i class="fas fa-expand"></i>
                         </button>
                     </div>
                 </div>
-                
-                <!-- Scenario Visualization -->
-                <div class="cyber-card p-6 lg:col-span-2">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg flex items-center">
-                            <i class="fas fa-project-diagram text-purple-300 mr-2"></i>تصور سيناريو الهجوم
-                        </h3>
-                        <div class="flex space-x-2 space-x-reverse">
-                            <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
-                                <i class="fas fa-download mr-1"></i> تصدير
-                            </button>
-                            <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
-                                <i class="fas fa-share mr-1"></i> مشاركة
-                            </button>
-                        </div>
+                <div class="h-64">
+                    <canvas id="statusChart" class="w-full h-full"></canvas>
+                </div>
+            </div>
+            
+            <!-- Requests by Service -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-gray-800">Requests per Service</h3>
+                    <div class="flex space-x-2">
+                        <span class="text-xs bg-gray-100 px-2 py-1 rounded-full">Last 7 days</span>
+                        <button class="p-1 text-blue-500 hover:bg-blue-50 rounded">
+                            <i class="fas fa-expand"></i>
+                        </button>
                     </div>
-                    
-                    <!-- Attack Path Visualization -->
-                    <div class="attack-path mt-6">
-                        <div class="attack-step">
-                            <div class="cyber-card p-4 mb-2">
-                                <div class="flex items-center">
-                                    <div class="bg-red-500 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                                        <span class="text-white text-xs">1</span>
-                                    </div>
-                                    <h4 class="font-bold">التجسس (Reconnaissance)</h4>
-                                </div>
-                                <p class="text-gray-400 text-sm mt-1">المهاجم يجمع معلومات عن الهدف من خلال مسح الشبكة وجمع البيانات المكشوفة.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="attack-step">
-                            <div class="cyber-card p-4 mb-2">
-                                <div class="flex items-center">
-                                    <div class="bg-red-500 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                                        <span class="text-white text-xs">2</span>
-                                    </div>
-                                    <h4 class="font-bold">تطوير الأسلحة (Weaponization)</h4>
-                                </div>
-                                <p class="text-gray-400 text-sm mt-1">إنشاء حمولة خبيثة باستخدام أداة Metasploit لاستغلال ثغرة معروفة.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="attack-step">
-                            <div class="cyber-card p-4 mb-2">
-                                <div class="flex items-center">
-                                    <div class="bg-red-500 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                                        <span class="text-white text-xs">3</span>
-                                    </div>
-                                    <h4 class="font-bold">التسليم (Delivery)</h4>
-                                </div>
-                                <p class="text-gray-400 text-sm mt-1">إرسال بريد إلكتروني تصيد يحتوي على رابط خبيث إلى موظفين في المؤسسة.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="attack-step">
-                            <div class="cyber-card p-4 mb-2">
-                                <div class="flex items-center">
-                                    <div class="bg-red-500 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                                        <span class="text-white text-xs">4</span>
-                                    </div>
-                                    <h4 class="font-bold">الاستغلال (Exploitation)</h4>
-                                </div>
-                                <p class="text-gray-400 text-sm mt-1">تنفيذ الكود الخبيث عند نقر الضحية على الرابط، مما يؤدي إلى تنشيط جلسة عكسية.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="attack-step">
-                            <div class="cyber-card p-4">
-                                <div class="flex items-center">
-                                    <div class="bg-red-500 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                                        <span class="text-white text-xs">5</span>
-                                    </div>
-                                    <h4 class="font-bold">التثبيت (Installation)</h4>
-                                </div>
-                                <p class="text-gray-400 text-sm mt-1">تثبيت باب خلفي على النظام للوصول المستمر.</p>
-                            </div>
-                        </div>
+                </div>
+                <div class="h-64">
+                    <canvas id="serviceChart" class="w-full h-full"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Requests by AI Model -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-gray-800">Requests by AI Model</h3>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs bg-gray-100 px-2 py-1 rounded-full">Top 5</span>
+                        <button class="p-1 text-blue-500 hover:bg-blue-50 rounded">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="h-64">
+                    <canvas id="modelChart" class="w-full h-full"></canvas>
+                </div>
+            </div>
+            
+            <!-- Requests Trend Over Time -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-gray-800">Requests Trend Over Time</h3>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs bg-gray-100 px-2 py-1 rounded-full">Hourly</span>
+                        <button class="p-1 text-blue-500 hover:bg-blue-50 rounded">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="h-64">
+                    <canvas id="trendChart" class="w-full h-full"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Data Section -->
+        <div class="grid grid-cols-1 gap-6">
+            <!-- Error Summary -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-gray-800">Error & Failure Summary</h3>
+                    <button class="text-sm text-blue-500 hover:bg-blue-50 px-3 py-1 rounded">
+                        View Details
+                    </button>
+                </div>
+                <div class="h-64">
+                    <canvas id="errorChart" class="w-full h-full"></canvas>
+                </div>
+            </div>
+            
+            <!-- Request Events -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-gray-800">Request Flow Distribution</h3>
+                    <button class="text-sm text-blue-500 hover:bg-blue-50 px-3 py-1 rounded">
+                        Export Data
+                    </button>
+                </div>
+                <div class="sankey-container rounded-lg border border-gray-200 flex items-center justify-center">
+                    <div class="text-center p-6">
+                        <i class="fas fa-project-diagram text-4xl text-gray-300 mb-3"></i>
+                        <p class="text-gray-500">Sankey diagram visualization would appear here</p>
+                        <p class="text-xs text-gray-400 mt-2">(Requires specialized library or custom implementation)</p>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <!-- MITRE ATT&CK Matrix -->
-        <section class="mb-12">
-            <h2 class="text-xl font-bold mb-6 pb-2 border-b border-gray-700 flex items-center">
-                <i class="fas fa-table text-green-400 mr-2"></i>مصفوفة MITRE ATT&CK
-            </h2>
             
-            <div class="cyber-card p-6 overflow-x-auto">
-                <div class="min-w-max">
-                    <table class="w-full">
-                        <thead>
+            <!-- Recent Requests Table -->
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="flex items-center justify-between p-6 pb-0">
+                    <h3 class="font-semibold text-gray-800">Recent Requests (Last 50)</h3>
+                    <button class="text-sm text-blue-500 hover:bg-blue-50 px-3 py-1 rounded">
+                        View All
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50 text-gray-500">
                             <tr>
-                                <th class="px-4 py-2 text-right bg-gray-800">التكتيكات</th>
-                                <th class="px-4 py-2 bg-gray-800">التجسس</th>
-                                <th class="px-4 py-2 bg-gray-800">تطوير الموارد</th>
-                                <th class="px-4 py-2 bg-gray-800">التسليم</th>
-                                <th class="px-4 py-2 bg-gray-800">الاستغلال</th>
-                                <th class="px-4 py-2 bg-gray-800">التثبيت</th>
-                                <th class="px-4 py-2 bg-gray-800">التحكم والقيادة</th>
-                                <th class="px-4 py-2 bg-gray-800">التنفيذ</th>
+                                <th class="p-3 text-left">ID</th>
+                                <th class="p-3 text-left">Service</th>
+                                <th class="p-3 text-left">Model</th>
+                                <th class="p-3 text-left">Status</th>
+                                <th class="p-3 text-left">Duration</th>
+                                <th class="p-3 text-left">Timestamp</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-gray-200">
                             <tr>
-                                <td class="px-4 py-2 bg-gray-800 font-bold">التجسس الأولي</td>
-                                <td class="px-4 py-2 text-center">
-                                    <div class="matrix-cell bg-red-900 text-white rounded p-1 mx-auto w-8 h-8 flex items-center justify-center">T1595</div>
-                                </td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
+                                <td class="p-3 font-mono text-xs">#REQ-78901</td>
+                                <td class="p-3">Chat API</td>
+                                <td class="p-3">GPT-4</td>
+                                <td class="p-3"><span class="px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">Completed</span></td>
+                                <td class="p-3">1.2s</td>
+                                <td class="p-3 text-gray-500">2 mins ago</td>
                             </tr>
                             <tr>
-                                <td class="px-4 py-2 bg-gray-800 font-bold">تطوير الموارد</td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2 text-center">
-                                    <div class="matrix-cell bg-red-900 text-white rounded p-1 mx-auto w-8 h-8 flex items-center justify-center">T1588</div>
-                                </td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
+                                <td class="p-3 font-mono text-xs">#REQ-78900</td>
+                                <td class="p-3">Image Gen</td>
+                                <td class="p-3">DALL·E 3</td>
+                                <td class="p-3"><span class="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs rounded-full">Processing</span></td>
+                                <td class="p-3">-</td>
+                                <td class="p-3 text-gray-500">5 mins ago</td>
                             </tr>
                             <tr>
-                                <td class="px-4 py-2 bg-gray-800 font-bold">آليات التسليم</td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2 text-center">
-                                    <div class="matrix-cell bg-red-900 text-white rounded p-1 mx-auto w-8 h-8 flex items-center justify-center">T1566</div>
-                                </td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
+                                <td class="p-3 font-mono text-xs">#REQ-78899</td>
+                                <td class="p-3">Embeddings</td>
+                                <td class="p-3">Ada v2</td>
+                                <td class="p-3"><span class="px-2 py-0.5 bg-red-100 text-red-800 text-xs rounded-full">Failed</span></td>
+                                <td class="p-3">0.4s</td>
+                                <td class="p-3 text-gray-500">12 mins ago</td>
                             </tr>
                             <tr>
-                                <td class="px-4 py-2 bg-gray-800 font-bold">استغلال الثغرات</td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2 text-center">
-                                    <div class="matrix-cell bg-red-900 text-white rounded p-1 mx-auto w-8 h-8 flex items-center justify-center">T1203</div>
-                                </td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 bg-gray-800 font-bold">التثبيت</td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2 text-center">
-                                    <div class="matrix-cell bg-red-900 text-white rounded p-1 mx-auto w-8 h-8 flex items-center justify-center">T1219</div>
-                                </td>
-                                <td class="px-4 py-2"></td>
-                                <td class="px-4 py-2"></td>
+                                <td class="p-3 font-mono text-xs">#REQ-78898</td>
+                                <td class="p-3">Code Analysis</td>
+                                <td class="p-3">Codex</td>
+                                <td class="p-3"><span class="px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">Completed</span></td>
+                                <td class="p-3">1.8s</td>
+                                <td class="p-3 text-gray-500">18 mins ago</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </section>
-
-        <!-- Threat Intelligence & Recommendations -->
-        <section class="mb-12">
-            <h2 class="text-xl font-bold mb-6 pb-2 border-b border-gray-700 flex items-center">
-                <i class="fas fa-lightbulb text-yellow-400 mr-2"></i>الاستخبارات الأمنية والتوصيات
-            </h2>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Threat Intelligence -->
-                <div class="cyber-card p-6 lg:col-span-1">
-                    <h3 class="font-bold text-lg mb-4 flex items-center">
-                        <i class="fas fa-bell text-red-400 mr-2"></i>التهديدات الحديثة
-                    </h3>
-                    
-                    <div class="space-y-4">
-                        <div class="cyber-card p-4 threat-level-high">
-                            <div class="flex justify-between items-start">
-                                <h4 class="font-bold">هجوم Log4j (CVE-2021-44228)</h4>
-                                <span class="bg-red-600 text-white text-xs px-2 py-1 rounded">عالي الخطورة</span>
-                            </div>
-                            <p class="text-gray-400 text-sm mt-1">ثغرة في مكتبة Log4j تسمح بتنفيذ أكواد عن بعد.</p>
-                            <div class="flex mt-2 text-xs text-gray-500">
-                                <span class="mr-3"><i class="fas fa-calendar mr-1"></i> 10 ديسمبر 2021</span>
-                                <span><i class="fas fa-link mr-1"></i> CVE-2021-44228</span>
-                            </div>
-                        </div>
-                        
-                        <div class="cyber-card p-4 threat-level-medium">
-                            <div class="flex justify-between items-start">
-                                <h4 class="font-bold">هجوم تصيد باستخدام Microsoft 365</h4>
-                                <span class="bg-yellow-600 text-white text-xs px-2 py-1 rounded">متوسط الخطورة</span>
-                            </div>
-                            <p class="text-gray-400 text-sm mt-1">حملة تصيد تستهدف مستخدمي Office 365 لسرقة بيانات الاعتماد.</p>
-                            <div class="flex mt-2 text-xs text-gray-500">
-                                <span class="mr-3"><i class="fas fa-calendar mr-1"></i> 15 يناير 2023</span>
-                                <span><i class="fas fa-link mr-1"></i> TA0001</span>
-                            </div>
-                        </div>
-                        
-                        <div class="cyber-card p-4 threat-level-low">
-                            <div class="flex justify-between items-start">
-                                <h4 class="font-bold">برمجية خبيثة جديدة في أجهزة IoT</h4>
-                                <span class="bg-green-600 text-white text-xs px-2 py-1 rounded">منخفض الخطورة</span>
-                            </div>
-                            <p class="text-gray-400 text-sm mt-1">برمجية خبيثة تستهدف أجهزة إنترنت الأشياء ذات الحماية الضعيفة.</p>
-                            <div class="flex mt-2 text-xs text-gray-500">
-                                <span class="mr-3"><i class="fas fa-calendar mr-1"></i> 5 فبراير 2023</span>
-                                <span><i class="fas fa-link mr-1"></i> MAL-2023-002</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="bg-gray-50 px-6 py-3 text-right">
+                    <button class="text-sm text-blue-500 hover:underline">View more records →</button>
                 </div>
-                
-                <!-- Security Recommendations -->
-                <div class="cyber-card p-6 lg:col-span-2">
-                    <h3 class="font-bold text-lg mb-4 flex items-center">
-                        <i class="fas fa-shield-alt text-blue-400 mr-2"></i>توصيات الحماية
-                    </h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="cyber-card p-4">
-                            <div class="flex items-center mb-2">
-                                <div class="bg-blue-600 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                                    <i class="fas fa-lock text-white text-xs"></i>
-                                </div>
-                                <h4 class="font-bold">تحديث الأنظمة</h4>
-                            </div>
-                            <p class="text-gray-400 text-sm">تأكد من تحديث جميع الأنظمة والبرامج بأحدث الإصدارات الأمنية.</p>
-                        </div>
-                        
-                        <div class="cyber-card p-4">
-                            <div class="flex items-center mb-2">
-                                <div class="bg-blue-600 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                                    <i class="fas fa-user-shield text-white text-xs"></i>
-                                </div>
-                                <h4 class="font-bold">المصادقة متعددة العوامل</h4>
-                            </div>
-                            <p class="text-gray-400 text-sm">تفعيل المصادقة الثنائية لجميع الحسابات المهمة.</p>
-                        </div>
-                        
-                        <div class="cyber-card p-4">
-                            <div class="flex items-center mb-2">
-                                <div class="bg-blue-600 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                                    <i class="fas fa-network-wired text-white text-xs"></i>
-                                </div>
-                                <h4 class="font-bold">تقسيم الشبكة</h4>
-                            </div>
-                            <p class="text-gray-400 text-sm">تطبيق مبدأ التقسيم الشبكي للحد من انتشار الهجمات.</p>
-                        </div>
-                        
-                        <div class="cyber-card p-4">
-                            <div class="flex items-center mb-2">
-                                <div class="bg-blue-600 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                                    <i class="fas fa-eye text-white text-xs"></i>
-                                </div>
-                                <h4 class="font-bold">مراقبة النشاط</h4>
-                            </div>
-                            <p class="text-gray-400 text-sm">تنفيذ حلول مراقبة النشاط لاكتشاف السلوكيات المشبوهة.</p>
-                        </div>
-                        
-                        <div class="cyber-card p-4">
-                            <div class="flex items-center mb-2">
-                                <div class="bg-blue-600 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                                    <i class="fas fa-users text-white text-xs"></i>
-                                </div>
-                                <h4 class="font-bold">التوعية الأمنية</h4>
-                            </div>
-                            <p class="text-gray-400 text-sm">تدريب الموظفين على التعرف على محاولات التصيد والهندسة الاجتماعية.</p>
-                        </div>
-                        
-                        <div class="cyber-card p-4">
-                            <div class="flex items-center mb-2">
-                                <div class="bg-blue-600 rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                                    <i class="fas fa-history text-white text-xs"></i>
-                                </div>
-                                <h4 class="font-bold">نسخ احتياطية</h4>
-                            </div>
-                            <p class="text-gray-400 text-sm">الحفاظ على نسخ احتياطية حديثة ومعزولة عن الشبكة.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- System Integration & Terminal -->
-        <section>
-            <h2 class="text-xl font-bold mb-6 pb-2 border-b border-gray-700 flex items-center">
-                <i class="fas fa-plug text-purple-400 mr-2"></i>التكامل مع الأنظمة
-            </h2>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Integration Options -->
-                <div class="cyber-card p-6 lg:col-span-1">
-                    <h3 class="font-bold text-lg mb-4 flex items-center">
-                        <i class="fas fa-cogs text-cyan-400 mr-2"></i>خيارات التكامل
-                    </h3>
-                    
-                    <div class="space-y-4">
-                        <div class="cyber-card p-4 flex items-center">
-                            <div class="bg-gray-700 rounded-full p-2 mr-3">
-                                <i class="fas fa-shield-virus text-green-400"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm">SIEM Integration</h4>
-                                <p class="text-gray-400 text-xs">Splunk, IBM QRadar, ArcSight</p>
-                            </div>
-                        </div>
-                        
-                        <div class="cyber-card p-4 flex items-center">
-                            <div class="bg-gray-700 rounded-full p-2 mr-3">
-                                <i class="fas fa-fire-extinguisher text-red-400"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm">جدران الحماية</h4>
-                                <p class="text-gray-400 text-xs">Palo Alto, Fortinet, Cisco ASA</p>
-                            </div>
-                        </div>
-                        
-                        <div class="cyber-card p-4 flex items-center">
-                            <div class="bg-gray-700 rounded-full p-2 mr-3">
-                                <i class="fas fa-robot text-blue-400"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm">أنظمة SOAR</h4>
-                                <p class="text-gray-400 text-xs">Demisto, Phantom, IBM Resilient</p>
-                            </div>
-                        </div>
-                        
-                        <div class="cyber-card p-4 flex items-center">
-                            <div class="bg-gray-700 rounded-full p-2 mr-3">
-                                <i class="fas fa-eye text-yellow-400"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm">أنظمة IDS/IPS</h4>
-                                <p class="text-gray-400 text-xs">Snort, Suricata, Cisco Firepower</p>
-                            </div>
-                        </div>
-                        
-                        <button class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg flex items-center justify-center mt-4">
-                            <i class="fas fa-plus-circle mr-2"></i> إضافة تكامل جديد
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- System Terminal -->
-                <div class="cyber-card p-6 lg:col-span-2">
-                    <h3 class="font-bold text-lg mb-4 flex items-center">
-                        <i class="fas fa-terminal text-green-400 mr-2"></i>نظام التحكم
-                    </h3>
-                    
-                    <div class="cyber-terminal">
-                        <div class="mb-2">
-                            <span class="terminal-prompt">cyberbot@security:~$</span> <span class="terminal-command">analyze --target 192.168.1.100 --profile phishing</span>
-                        </div>
-                        <div class="terminal-output mb-2">
-                            [INFO] Starting analysis for target: 192.168.1.100<br>
-                            [INFO] Loading phishing attack profile...<br>
-                            [INFO] Scanning for vulnerable services...<br>
-                            [WARNING] Detected outdated Exchange Server (CVE-2021-26855)<br>
-                            [ALERT] Potential phishing entry point detected on port 443<br>
-                        </div>
-                        
-                        <div class="mb-2">
-                            <span class="terminal-prompt">cyberbot@security:~$</span> <span class="terminal-command">generate --scenario mitre --tactic initial_access</span>
-                        </div>
-                        <div class="terminal-output mb-2">
-                            [INFO] Generating attack scenario using MITRE ATT&CK framework<br>
-                            [INFO] Focused on tactic: Initial Access (TA0001)<br>
-                            [SUCCESS] Scenario generated:<br>
-                            &nbsp;&nbsp;1. Spearphishing Link (T1566.002)<br>
-                            &nbsp;&nbsp;2. Exploit Public-Facing Application (T1190)<br>
-                            &nbsp;&nbsp;3. Valid Accounts (T1078)<br>
-                        </div>
-                        
-                        <div class="mb-2">
-                            <span class="terminal-prompt">cyberbot@security:~$</span> <span class="terminal-command">recommend --severity high</span>
-                        </div>
-                        <div class="terminal-output">
-                            [INFO] Generating high severity recommendations:<br>
-                            &nbsp;&nbsp;1. Implement email filtering for phishing attempts<br>
-                            &nbsp;&nbsp;2. Patch Exchange Server immediately<br>
-                            &nbsp;&nbsp;3. Enforce MFA for all user accounts<br>
-                            &nbsp;&nbsp;4. Conduct employee security awareness training<br>
-                        </div>
-                        
-                        <div class="mt-4">
-                            <span class="terminal-prompt">cyberbot@security:~$</span> <span class="terminal-command blink">|</span>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4 flex space-x-2 space-x-reverse">
-                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
-                            <i class="fas fa-play mr-1"></i> تنفيذ
-                        </button>
-                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
-                            <i class="fas fa-stop mr-1"></i> إيقاف
-                        </button>
-                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
-                            <i class="fas fa-save mr-1"></i> حفظ
-                        </button>
-                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
-                            <i class="fas fa-trash mr-1"></i> مسح
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 py-6 mt-12">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <p class="text-gray-400 text-sm">
-                        <i class="fas fa-shield-alt mr-1"></i> نظام روبوت الأمن السيبراني - الإصدار 1.0.0
-                    </p>
-                </div>
-                <div class="flex space-x-4 space-x-reverse">
-                    <a href="#" class="text-gray-400 hover:text-white">
-                        <i class="fab fa-github"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white">
-                        <i class="fab fa-linkedin"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white">
-                        <i class="fas fa-envelope"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t border-gray-800 text-center">
-                <p class="text-gray-500 text-xs">
-                    © 2025 فريق الأمن السيبراني. جميع الحقوق محفوظة.
-                    <span class="mx-2">|</span>
-                    <a href="#" class="hover:text-gray-300">سياسة الخصوصية</a>
-                    <span class="mx-2">|</span>
-                    <a href="#" class="hover:text-gray-300">شروط الاستخدام</a>
-                </p>
             </div>
         </div>
-    </footer>
+    </div>
 
     <script>
-        // Simulate terminal typing effect
+        // Initialize charts after DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Add blinking cursor effect
-            setInterval(() => {
-                const cursor = document.querySelector('.blink');
-                if (cursor) {
-                    cursor.style.visibility = (cursor.style.visibility === 'hidden' ? '' : 'hidden');
+            // Request Status Distribution - Doughnut Chart
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            const statusChart = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Failed', 'Processing'],
+                    datasets: [{
+                        data: [18543, 267, 5980],
+                        backgroundColor: [
+                            '#10B981', // green
+                            '#EF4444', // red
+                            '#F59E0B'  // amber
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value.toLocaleString()} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%'
                 }
-            }, 500);
-
-            // Add hover effects to cyber cards
-            const cyberCards = document.querySelectorAll('.cyber-card');
-            cyberCards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    card.style.transform = 'translateY(-5px)';
-                });
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = '';
-                });
             });
 
-            // Simulate network nodes animation
-            const networkNodes = document.querySelectorAll('.network-node');
-            networkNodes.forEach((node, index) => {
-                node.style.animationDelay = `${index * 0.2}s`;
+            // Requests per Service - Bar Chart
+            const serviceCtx = document.getElementById('serviceChart').getContext('2d');
+            const serviceChart = new Chart(serviceCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Chat API', 'Image Generation', 'Text Embedding', 'Audio Processing', 'Code Analysis', 'Moderation'],
+                    datasets: [{
+                        label: 'Requests',
+                        data: [8560, 4320, 3780, 2150, 2870, 3100],
+                        backgroundColor: [
+                            '#3B82F6', '#6366F1', '#8B5CF6', '#EC4899', '#F97316', '#10B981'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
             });
 
-            // Toggle MITRE ATT&CK technique details
-            const matrixCells = document.querySelectorAll('.matrix-cell');
-            matrixCells.forEach(cell => {
-                cell.addEventListener('click', () => {
-                    alert(`تفاصيل تقنية MITRE ATT&CK: ${cell.textContent}\nسيتم عرض المزيد من التفاصيل في لوحة المعلومات.`);
-                });
+            // Requests by AI Model - Horizontal Bar Chart
+            const modelCtx = document.getElementById('modelChart').getContext('2d');
+            const modelChart = new Chart(modelCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['GPT-4', 'DALL·E 3', 'Claude 2', 'Llama 2', 'PaLM 2'],
+                    datasets: [{
+                        label: 'Requests',
+                        data: [12000, 6400, 2800, 1500, 1100],
+                        backgroundColor: '#6366F1',
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Requests Trend Over Time - Line Chart
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            const trendChart = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+                    datasets: [{
+                        label: 'Requests',
+                        data: [120, 80, 60, 50, 70, 90, 150, 300, 420, 560, 720, 850, 920, 880, 820, 780, 860, 930, 1020, 1150, 1080, 920, 730, 450],
+                        fill: false,
+                        borderColor: '#10B981',
+                        backgroundColor: '#10B981',
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Error Summary - Stacked Bar Chart
+            const errorCtx = document.getElementById('errorChart').getContext('2d');
+            const errorChart = new Chart(errorCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Chat API', 'Image Gen', 'Embeddings', 'Audio', 'Code', 'Moderation'],
+                    datasets: [
+                        {
+                            label: 'Timeout Errors',
+                            data: [12, 5, 3, 8, 2, 1],
+                            backgroundColor: '#F97316'
+                        },
+                        {
+                            label: 'Rate Limits',
+                            data: [8, 2, 1, 4, 3, 0],
+                            backgroundColor: '#F59E0B'
+                        },
+                        {
+                            label: 'Content Policy',
+                            data: [3, 15, 1, 2, 1, 7],
+                            backgroundColor: '#F43F5E'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
             });
         });
     </script>
+
+    <!-- Users & Subscriptions Section -->
+    <div id="users-stats" class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Users & Subscriptions Statistics</h1>
+            <p class="text-gray-600">Dashboard showing user activity and subscription metrics</p>
+        </header>
+
+        <!-- Active Users KPI -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h3 class="font-semibold text-gray-800 mb-4">Active Users</h3>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-4xl font-bold text-blue-600">8,421</h2>
+                    <p class="text-xs text-green-500 flex items-center">
+                        <i class="fas fa-arrow-up mr-1"></i> 7.5% from last month
+                    </p>
+                </div>
+                <div class="text-gray-500 text-sm">
+                    Out of 15,284 total registered users
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- User Status Distribution -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold text-gray-800 mb-4">User Status Distribution</h3>
+                <div class="h-64">
+                    <canvas id="userStatusChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Subscriptions by Plan -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold text-gray-800 mb-4">Subscriptions by Plan</h3>
+                <div class="h-64">
+                    <canvas id="subscriptionPlanChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- New Users Trend -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold text-gray-800 mb-4">New User Registrations</h3>
+                <div class="h-64">
+                    <canvas id="newUsersChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Last Login Activity -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold text-gray-800 mb-4">User Login Activity</h3>
+                <div class="h-64">
+                    <canvas id="loginActivityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request Per User -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="font-semibold text-gray-800 mb-4">Average Requests per Active User</h3>
+            <div class="h-64">
+                <canvas id="requestsPerUserChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Models Statistics Section -->
+    <div id="ai-models-stats" class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">AI Models Statistics</h1>
+            <p class="text-gray-600">Dashboard showing model distribution and usage metrics</p>
+        </header>
+
+        <!-- Models KPIs Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <!-- Total Models KPI -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total AI Models</p>
+                        <h2 class="text-3xl font-bold text-blue-600 my-2">127</h2>
+                        <p class="text-xs text-green-500 flex items-center">
+                            <i class="fas fa-arrow-up mr-1"></i> 8% growth
+                        </p>
+                    </div>
+                    <div class="bg-blue-100 p-2 rounded-lg">
+                        <i class="fas fa-brain text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Distribution Chart -->
+            <div class="bg-white rounded-lg shadow p-6 md:col-span-2">
+                <h3 class="font-semibold text-gray-800 mb-4">Models by Category</h3>
+                <div class="h-64">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Language Support Chart -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold text-gray-800 mb-4">Models by Supported Language</h3>
+                <div class="h-64">
+                    <canvas id="languageChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Custom vs Standard Chart -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold text-gray-800 mb-4">Custom vs Standard Models</h3>
+                <div class="h-64">
+                    <canvas id="modelTypeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Most Used Models -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="font-semibold text-gray-800 mb-4">Most Used Models (Last 30 Days)</h3>
+            <div class="h-64">
+                <canvas id="popularModelsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spaces Statistics Section -->
+    <div id="spaces-stats" class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Spaces Statistics</h1>
+            <p class="text-gray-600">Dashboard showing spaces deployment and resource utilization</p>
+        </header>
+
+        <!-- Spaces KPIs -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <!-- Total Spaces KPI -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total Spaces</p>
+                        <h2 class="text-3xl font-bold text-blue-600 my-2">2,843</h2>
+                        <p class="text-xs text-green-500 flex items-center">
+                            <i class="fas fa-arrow-up mr-1"></i> 15 new today
+                        </p>
+                    </div>
+                    <div class="bg-blue-100 p-2 rounded-lg">
+                        <i class="fas fa-cubes text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GPU vs Non-GPU Chart -->
+            <div class="bg-white rounded-lg shadow p-6 md:col-span-2">
+                <h3 class="font-semibold text-gray-800 mb-4">GPU vs Non-GPU Spaces</h3>
+                <div class="h-64">
+                    <canvas id="gpuChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resource Usage -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <!-- RAM Usage KPI -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total RAM Usage</p>
+                        <h2 class="text-3xl font-bold text-indigo-600 my-2">42.7 <span class="text-sm">TB</span></h2>
+                        <p class="text-xs text-gray-500">Across all spaces</p>
+                    </div>
+                    <div class="bg-indigo-100 p-2 rounded-lg">
+                        <i class="fas fa-memory text-indigo-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CPU Usage KPI -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total CPU Cores</p>
+                        <h2 class="text-3xl font-bold text-purple-600 my-2">5,284</h2>
+                        <p class="text-xs text-gray-500">Allocated to spaces</p>
+                    </div>
+                    <div class="bg-purple-100 p-2 rounded-lg">
+                        <i class="fas fa-microchip text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disk Usage KPI -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total Disk Usage</p>
+                        <h2 class="text-3xl font-bold text-pink-600 my-2">387 <span class="text-sm">TB</span></h2>
+                        <p class="text-xs text-gray-500">Across all spaces</p>
+                    </div>
+                    <div class="bg-pink-100 p-2 rounded-lg">
+                        <i class="fas fa-hdd text-pink-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Spaces Stats -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Public vs Private Chart -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold text-gray-800 mb-4">Public vs Private Spaces</h3>
+                <div class="h-64">
+                    <canvas id="visibilityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Avg Resources Per Space -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold text-gray-800 mb-6">Average Resources per Space</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow transition-shadow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-xs font-medium uppercase tracking-wider">RAM</p>
+                                <p class="text-2xl font-bold text-indigo-600 my-1">15.2 <span class="text-sm">GB</span></p>
+                                <p class="text-xs text-green-500 flex items-center">
+                                    <i class="fas fa-arrow-up mr-1"></i> 5% from last month
+                                </p>
+                            </div>
+                            <div class="bg-indigo-100 p-2 rounded-lg">
+                                <i class="fas fa-memory text-indigo-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow transition-shadow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-xs font-medium uppercase tracking-wider">CPU Cores</p>
+                                <p class="text-2xl font-bold text-purple-600 my-1">2.1</p>
+                                <p class="text-xs text-gray-500">Avg per space</p>
+                            </div>
+                            <div class="bg-purple-100 p-2 rounded-lg">
+                                <i class="fas fa-microchip text-purple-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow transition-shadow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-xs font-medium uppercase tracking-wider">Storage</p>
+                                <p class="text-2xl font-bold text-pink-600 my-1">142 <span class="text-sm">GB</span></p>
+                                <p class="text-xs text-gray-500 flex items-center">
+                                    <span class="w-2 h-2 bg-yellow-400 rounded-full mr-1"></span>
+                                    Modest growth
+                                </p>
+                            </div>
+                            <div class="bg-pink-100 p-2 rounded-lg">
+                                <i class="fas fa-hdd text-pink-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize charts for Users & Subscriptions page
+        function initUsersCharts() {
+            // User Status Distribution (Pie)
+            new Chart(document.getElementById('userStatusChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Active', 'Archived', 'New (7d)'],
+                    datasets: [{
+                        data: [8421, 4360, 1250],
+                        backgroundColor: ['#10B981', '#6366F1', '#3B82F6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Subscription Plans (Bar)
+            new Chart(document.getElementById('subscriptionPlanChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Free', 'Pro', 'Business', 'Enterprise'],
+                    datasets: [{
+                        label: 'Subscriptions',
+                        data: [3250, 4270, 950, 290],
+                        backgroundColor: '#8B5CF6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // New Users Trend (Line)
+            new Chart(document.getElementById('newUsersChart'), {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 12}, (_, i) => `${i+1} months ago`).reverse(),
+                    datasets: [{
+                        label: 'New Users',
+                        data: [150, 180, 210, 240, 290, 320, 380, 420, 450, 480, 510, 540],
+                        fill: false,
+                        borderColor: '#3B82F6',
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Login Activity (Bar)
+            new Chart(document.getElementById('loginActivityChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Last 24h', 'Last week', 'Last month', 'Over month ago'],
+                    datasets: [{
+                        label: 'Users',
+                        data: [2850, 3720, 5120, 3685],
+                        backgroundColor: '#EC4899'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Requests Per User (Line)
+            new Chart(document.getElementById('requestsPerUserChart'), {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 7}, (_, i) => `Day ${i+1}`),
+                    datasets: [{
+                        label: 'Average Requests',
+                        data: [45, 52, 38, 41, 56, 42, 48],
+                        fill: false,
+                        borderColor: '#10B981',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Initialize charts for AI Models page
+        function initModelsCharts() {
+            // Category Distribution (Pie)
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['LLM', 'Image', 'Audio', 'Video', 'Multimodal', 'Other'],
+                    datasets: [{
+                        data: [65, 22, 18, 8, 12, 2],
+                        backgroundColor: [
+                            '#3B82F6', '#6366F1', '#8B5CF6', '#EC4899', '#F97316', '#10B981'
+                        ]
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Language Support (Horizontal Bar)
+            new Chart(document.getElementById('languageChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['English', 'Multilingual', 'Chinese', 'Spanish', 'French'],
+                    datasets: [{
+                        label: 'Models',
+                        data: [87, 45, 32, 28, 19],
+                        backgroundColor: '#6366F1'
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Custom vs Standard (Doughnut)
+            new Chart(document.getElementById('modelTypeChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Standard', 'Custom'],
+                    datasets: [{
+                        data: [85, 42],
+                        backgroundColor: ['#10B981', '#3B82F6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%'
+                }
+            });
+
+            // Popular Models (Bar)
+            new Chart(document.getElementById('popularModelsChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['GPT-4', 'Llama 2 70B', 'Claude 2', 'DALL·E 3', 'Whisper'],
+                    datasets: [{
+                        label: 'Requests (thousands)',
+                        data: [1870, 1230, 980, 840, 550],
+                        backgroundColor: '#EC4899'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Initialize charts for Spaces page
+        function initSpacesCharts() {
+            // GPU Distribution (Pie)
+            new Chart(document.getElementById('gpuChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['GPU Enabled', 'CPU Only'],
+                    datasets: [{
+                        data: [1430, 1413],
+                        backgroundColor: ['#F97316', '#3B82F6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Visibility (Doughnut)
+            new Chart(document.getElementById('visibilityChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Public', 'Private'],
+                    datasets: [{
+                        data: [1985, 858],
+                        backgroundColor: ['#10B981', '#6366F1']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%'
+                }
+            });
+        }
+
+        // Initialize all charts when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initUsersCharts();
+            initModelsCharts();
+            initSpacesCharts();
+        });
+    </script>
 </body>
-</html>"""
+</html>
+ 
+                        
+                    """
         },
         template="html",
         height=600,
