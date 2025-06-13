@@ -11,7 +11,7 @@ import t2speechmuit
 import userspace
 import menupage
 import dach
-
+import roadGuard
 
 import audio_interface
 app = FastAPI()
@@ -29,6 +29,7 @@ async def redirect_to_site():
 
 app = gr.mount_gradio_app(app, menupage.demo, path='/menupage')
 app = gr.mount_gradio_app(app, dach.demo, path='/dach')
+app = gr.mount_gradio_app(app, roadGuard.demo, path='/roadGuard')
 #app = gr.mount_gradio_app(app, t2speech.demo, path='/t2speech')
 #app = gr.mount_gradio_app(app, testc.demo, path='/testc')
 # app = gr.mount_gradio_app(app, t2text.demo, path='/studio-t2text')
