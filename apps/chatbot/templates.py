@@ -15,7 +15,7 @@ from typing import Optional, Text
 from .components import *
 from .compoentchat import *
 from .routers import *
-
+import requests
 
 
 
@@ -53,8 +53,38 @@ class TemplateSpeechStudioBuilder:
 
         print(f"Message event: {self.msg_event}")
         print(f"Status code: {self.status_code}")
+    AZURE_CHAT_ENDPOINT = "https://lahja-dev-resource.cognitiveservices.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2025-01-01-preview"
+    def chat_with_gpt(self,text, api_key):
+          headers= {
+                  "Content-Type": "application/json",
+                  "Authorization": f"Bearer {api_key}"
+              }
+        
+          messages = [
+              {
 
+                  "role": "system",
+                  "content": (
+                      "انت مساعد ذكي اسمه (لهجة)، مطور من قبل شركة (أسس الذكاء الرقمي). "
+                      "رد دايمًا باللهجة النجدية السعودية. "
+                      "خلك مختصر وواضح."
+                  )
+              },
+              {"role": "user", "content": text}
+          ]
+          data = {
+              "messages": messages,
+              "max_tokens": 512,
+              "temperature": 0.8,
+              "top_p": 1,
+              "model": "gpt-4o"
+          }
+          response = requests.post(self.AZURE_CHAT_ENDPOINT, json=data, headers=headers)
+          if response.status_code == 200:
+              return response.json()["choices"][0]["message"]["content"]
 
+          else:
+              return f"Error: {response.status_code}\n{response.text}"
     def get_data_chat_txt_model(self,data=[]):
        
            
@@ -62,7 +92,7 @@ class TemplateSpeechStudioBuilder:
                 "modelGateway": data.get("modelGateway", ""),
                 "modelAi": data.get("modelAi", "wasmdashai/T2T"),
                 "service": data.get("service", "/predict"),
-                "token": data.get("token","AIzaSyC85_3TKmiXtOpwybhSFThZdF1nGKlxU5c"),
+                "token": data.get("token","4AwsIf87cyBIgaJVsy0phWUQdZFcbrJxpQBDQNzL4xjcP2MFzrrYJQQJ99BIACHYHv6XJ3w3AAAAACOGYrzM"),
                 "eventId": data.get("eventId", ""),
                 "numberRequests": data.get("numberRequests", 0),
                 "currentNumberRequests": data.get("currentNumberRequests", 0)
@@ -164,7 +194,7 @@ class TemplateSpeechStudioBuilder:
 
 
 
-    def ask_ai(self, message,model=""):
+    def ask_ai(self, message,key=""):
       try:
             
             if not self.validate_input(message):
@@ -182,10 +212,10 @@ class TemplateSpeechStudioBuilder:
               
               
                     modelAi=datarquest['modelAi'] 
-                    key=datarquest['token']
+                   
 
                     api_name=datarquest['service']
-                    result=self.initialize_client(modelAi=modelAi,token=key,service=api_name,message=message)
+                    result=self.chat_with_gpt(message,key)
                     if result!=None:
                         print(f"result: {result}")
                         result_request=self.send_event_request(self.data,request,result,self.status_code)
@@ -213,87 +243,7 @@ class TemplateSpeechStudioBuilder:
                 return self.error_event_handler(e, function_name="ask_ai")
 
 
-        #         if self.client is None:
-
-        #             self.client = Client(datarquest['modelAi'])
-        #             self.msg_event = "Client initialized successfully"
-        #             self.status_code = 22.2
-        #     except Exception as e:
-
-        #         self.msg_event = f"Error initializing client: {e}"
-        #         self.status_code = 22.3
-        #         print(f"Error initializing client: {e}")
-        #         self.client = Client(datarquest['modelAi'])
-
-        #         #self.handle_error(f"Error initializing client: {e}", 22.3)
-
-        #     try:
-
-        #         result = self.client.predict(
-        #             #key=request["data"]["token"]
-        #             #api_name=request["data"]["service"]
-        #             text=message,
-        #             key=datarquest['token'],
-        #             api_name=datarquest['service']
-        #         )
-
-
-        #         if result!=None:
-        #             print(f"result: {result}")
-        #             self.msg_event = "predict completed successfully"
-        #             self.status_code = 222
-        #             #event_id=request["data"]["eventId"]
-                     
-        #             #status=request["status"]
-
-
-
-        #             #result_request=self.builderRequest.send_event_request(event_id,result,status)
-
-
-        #             result_request=self.send_event_request(self.data,request,result,self.status_code)
-
-        #             print(f"result: {result_request}")
-        #             if result_request and result_request["status"]=="success":
-        #                 self.msg_event = "predict completed successfully"
-        #                 print(f"msg_event: {self.msg_event}")
-        #                 print(self.msg_event)
-
-        #             else:
-        #                 self.msg_event = "result send event request   None"
-        #                 self.status_code =result_request['status_code']
-        #                 print(f"msg_event: {self.msg_event}")
-        #                 print(self.msg_event)
-        #                 if self.Isdiv==False:
-                          
-        #                       return self.handle_error(self.msg_event ,self.status_code)
-
-
-        #         else:
-        #             self.msg_event = "result client predict None"
-        #             self.status_code =11.2
-        #             print(self.msg_event)
-        #             return self.handle_error(self.msg_event ,self.status_code)
-        #     except Exception as e:
-
-        #         self.msg_event = f"Error during prediction: {e}"
-        #         self.status_code = 224
-        #         print(f"Error during prediction: {e}")
-        #         return self.handle_error(self.msg_event ,self.status_code)
-
-        # else:
-            
-        #     self.msg_event =request['message']
-        #     self.status_code =request['status_code']
-           
-        #     return self.handle_error(self.msg_event ,self.status_code)
-
-
-        
-
-
-
-        # return result
+       
 
 
 
@@ -365,82 +315,9 @@ class TemplateSpeechStudioBuilder:
           print(f"get_filter:{result}")
           return result
  
-    def update_languages_api(self, category):
-        self.msg_event = f"Updating languages for category {category}"
-        available_languages=self.get_filter(FilterModelAI(category=category),"language")
-        return available_languages
-        
-
-    # def update_languages(self, category):
-
-
-
-    #     self.msg_event = f"Updating languages for category {category}"
-    #     available_languages=self.get_filter(FilterModelAI(category=category),"language")
-    #     #first_value = available_languages[0] if available_languages and isinstance(available_languages, list) else None
-    #     if available_languages!=None:
-           
-    #         return gr.update(choices=available_languages, value=[], visible=True)
-    #     else:
-    #         return gr.update(choices=available_languages, value=[], visible=False)
-
-
-
-    def update_languages(self, category):
-   
-            if not isinstance(category, str) or not category.strip():
-                 
-               return gr.update(choices=[], value=[], visible=False)
+  
          
-            available_languages = self.get_filter(FilterModelAI(category=category), "language")
-            if available_languages is not None and isinstance(available_languages, list):
-                return gr.update(choices=available_languages, value=[], visible=True)
-            else:
-                return gr.update(choices=[], value=[], visible=False)  # إذا كانت القائمة فارغة أو غير موجودة
 
-
-    def update_dialects(self,category,language):
-        
-            
-        if not isinstance(category, str) or not category.strip()  :
-                 
-               return gr.update(choices=[], value=[], visible=False)
-        
-        if not isinstance(language, str) or not language.strip():
-               return gr.update(choices=[], value=[], visible=False)
-
-
-
-        self.msg_event = f"Updating dialects for language {language}"
-        available_dialects=self.get_filter(FilterModelAI(category=category,language=language),"dialect")
-        if available_dialects!=None:
-            #first_value = available_dialects[0] if available_dialects and isinstance(available_dialects, list) else None
-            return gr.update(choices=available_dialects, value=[], visible=True)
-        else:
-            return gr.update(choices=[], value=[], visible=False)
-
-    def update_models(self, category,language,dialect):
-      
-        if not isinstance(language, str) or not language.strip():
-               return gr.update(choices=[], value=[], visible=False)
-        if not isinstance(category, str) or not category.strip()  :
-                 
-               return gr.update(choices=[], value=[], visible=False)
-        if not isinstance(dialect, str) or not dialect.strip()  :
-                 
-               return gr.update(choices=[], value=[], visible=False)
-        self.msg_event = f"Updating models for dialect {dialect}"
-        default_model=self.get_filter(FilterModelAI(category=category,language=language,dialect=dialect),"AbsolutePath")
-        if default_model!=None:
-                self.msg_event = f"Updating models for dialect {dialect}"
-       
-                first_value = default_model[0] if default_model and isinstance(default_model, list) else None
-                return gr.update(choices=default_model, value=first_value,visible=True)
-        else:
-                
-                return gr.update(choices=[], value=[],visible=False)
-
-                
                    
     def createapi(self, data=None, language="en"):
 
@@ -453,10 +330,10 @@ class TemplateSpeechStudioBuilder:
         self.msg_event = f"Creating app for language {language}"
         print(self.msg_event )
         self.data = data
+        
    
        
-        # print(self.token)
-        # print(data)
+       
         with gr.Column() as service_dashboard:
          
        
