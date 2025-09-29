@@ -161,136 +161,7 @@ def create_chatbot_app(builderobj=None, lg="en"):
         }
     }
 
-    
-    def menu_studio(builder, lg="en"):
-          m_category = []
-          fist_categary = []
-          type_server_pige ="Text-to-Speech"
-          
-          if builder.Isdiv == False:
-              m_category = builder.get_filter(FilterModelAI(Type=ChatSetting.NameMode),ChatSetting.StartModel )
-          else:
-              m_category = builder.builder.get_property(ChatSetting.StartModel)
-          
-          if m_category is not None and len(m_category) > 0:
-              fist_categary = m_category[0]
-          
-          current_language = lg
-          
-          # Black theme CSS
-          black_theme_css = """
-          :root {#
-              --bg-color: #1e1e1e;
-              --panel-color: #1e1e1e;
-              --text-color: #ffffff;
-              --border-color: #333333;
-              --hover-color: #2a2a2a;
-          }
-          .black-theme {
-              background-color: var(--bg-color);
-              color: var(--text-color);
-              border-color: var(--border-color);
-          }
-          .black-theme .gr-accordion {
-              background: var(--panel-color);
-              border: 1px solid var(--border-color);
-          }
-          .black-theme .gr-dropdown, 
-          .black-theme .gr-slider,
-          .black-theme .gr-checkbox {
-              background: var(--panel-color);
-              color: var(--text-color);
-          }
-          .black-theme .gr-slider .gr-handle {
-              background: var(--text-color);
-          }
-          """
-          
-          with gr.Blocks(css=black_theme_css) as panel:
-              with gr.Row():
-                  with gr.Column(scale=1, elem_classes="black-theme"):
-                      # Options Accordion
-                      with gr.Accordion(LANGUAGES[current_language]["options"], open=True):
-                          category_dropdown = gr.Dropdown(
-                              choices=m_category,
-                              label=LANGUAGES[current_language]["category"],
-                              value=fist_categary,
-                              info=LANGUAGES[current_language]["choose_category"],
-                              interactive=True
-                          )
-                          
-                          language_dropdown = gr.Dropdown(
-                              choices=[],
-                              label=LANGUAGES[current_language]["language"],
-                              value=[],
-                              visible=False,
-                              info=LANGUAGES[current_language]["choose_language"],
-                              interactive=True
-                          )
-                          
-                          dialect_dropdown = gr.Dropdown(
-                              choices=[],
-                              label=LANGUAGES[current_language]["dialect"],
-                              value=[],
-                              visible=False,
-                              info=LANGUAGES[current_language]["choose_dialect"],
-                              interactive=True
-                          )
-                          
-                          model_dropdown = gr.Dropdown(
-                              label=LANGUAGES[current_language]["model_name"],
-                              value=[],
-                              visible=False,
-                              interactive=True,
-                              info=LANGUAGES[current_language]["choose_model"]
-                          )
-                      
-                      # Settings Accordion
-                      with gr.Accordion(LANGUAGES[current_language]["settings"], open=False):
-                          temperature_slider = gr.Slider(
-                              label=LANGUAGES[current_language]["temperature"],
-                              minimum=0.1, 
-                              maximum=5, 
-                              step=0.1, 
-                              value=0.7,
-                              interactive=True
-                          )
-                          
-                          speech_rate_slider = gr.Slider(
-                              label=LANGUAGES[current_language]["max_token"],
-                              minimum=50, 
-                              maximum=120000, 
-                              step=50, 
-                              value=1024,
-                              interactive=True
-                          )
-                          
-                          streaming_toggle = gr.Checkbox(
-                              label=LANGUAGES[current_language]["streaming"],
-                              interactive=True,
-                              value=True
-                          )
-                      
-                      # Event handlers
-                      category_dropdown.change(
-                          builder.update_languages, 
-                          inputs=[category_dropdown], 
-                          outputs=[language_dropdown]
-                      )
-                      
-                      language_dropdown.change(
-                          builder.update_dialects, 
-                          inputs=[category_dropdown, language_dropdown], 
-                          outputs=[dialect_dropdown]
-                      )
-                      
-                      dialect_dropdown.change(
-                          builder.update_models, 
-                          inputs=[category_dropdown, language_dropdown, dialect_dropdown], 
-                          outputs=[model_dropdown]
-                      )
-          
-          
+   
 
     def user_config(disabled_actions=None):
         return ChatbotUserConfig(actions=[
@@ -774,8 +645,8 @@ def create_chatbot_app(builderobj=None, lg="en"):
                                 ) as conversation_delete_menu_item:
                                     with ms.Slot("icon"):
                                         antd.Icon("DeleteOutlined")
-                        antd.Divider("Menu")
-                        menu_studio(builderobj)               
+                        
+                                 
                         antd.Divider("Settings")
 
                                     # Settings Area
@@ -971,5 +842,6 @@ def create_chatbot_app(builderobj=None, lg="en"):
     
     return demo
 
+ 
  
  
