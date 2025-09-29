@@ -5,7 +5,7 @@ from typing import Optional
 
  
 
-
+text_to_speech(text, voice="alloy", speed=1,api_key):
 class UserHandler:
     def __init__(self, builder):
         self.router = APIRouter()
@@ -14,7 +14,9 @@ class UserHandler:
         @self.router.post("/ChatText2Text")
         def Chat_Text2Text(message: str, key: str = ""):
             return self.__builder.ask_ai(message,key)
-
+        @self.router.post("/ChatText2Speech")
+        def Chat_Text2Speech(text: str,voice:str="alloy", speed=1,api_key: str = ""):
+            return self.__builder.text_to_speech(text,voice,speed,api_key)
        
         
     def get_router(self):
