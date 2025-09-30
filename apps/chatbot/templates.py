@@ -62,7 +62,7 @@ class TemplateSpeechStudioBuilder:
     CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=lhjaspcev15204396534;AccountKey=vbGXAI8Fqix/bV15xFfkU3pzgs9wCav0IRy9Vv0gVjh0s3sAZV1oLi3NgMC6fG6MsvhMg7/VohUC+AStizl4zg==;EndpointSuffix=core.windows.net"
     CONTAINER_NAME = "soundsaudi"
     AZURE_TTS_ENDPOINT = "https://lahja-dev-resource.cognitiveservices.azure.com/openai/deployments/LAHJA-V1/audio/speech?api-version=2025-03-01-preview"
-    def text_to_speech_and_upload(self, text, api_key, file_type="wav", voice="alloy", speed=1):
+    def text_to_speech_and_upload(self, text, api_key, file_type="wav", voice="alloy",speed=1):
         try:
             headers = {
                 "Content-Type": "application/json",
@@ -72,7 +72,7 @@ class TemplateSpeechStudioBuilder:
                 "model": "LAHJA-V1",
                 "input": text,
                 "voice": voice,
-                "speed": speed
+                "speed":1.0
             }
             response = requests.post(self.AZURE_TTS_ENDPOINT, json=data, headers=headers)
             if response.status_code != 200:
