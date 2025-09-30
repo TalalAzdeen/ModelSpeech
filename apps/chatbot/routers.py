@@ -5,7 +5,7 @@ from typing import Optional
 
  
 
-text_to_speech(text, voice="alloy", speed=1,api_key):
+ 
 class UserHandler:
     def __init__(self, builder):
         self.router = APIRouter()
