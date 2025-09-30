@@ -66,7 +66,7 @@ class TemplateSpeechStudioBuilder:
                 "voice": voice,
                 "speed": speed
             }
-            response = requests.post(AZURE_TTS_ENDPOINT, json=data, headers=headers)
+            response = requests.post(self.AZURE_TTS_ENDPOINT,json=data, headers=headers)
             if response.status_code == 200:
              
                 return response.content
