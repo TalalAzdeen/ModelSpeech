@@ -55,7 +55,7 @@ class TemplateSpeechStudioBuilder:
         print(f"Status code: {self.status_code}")
     ZURE_TTS_ENDPOINT = "https://lahja-dev-resource.cognitiveservices.azure.com/openai/deployments/LAHJA-V1/audio/speech?api-version=2025-03-01-preview"
     AZURE_CHAT_ENDPOINT = "https://lahja-dev-resource.cognitiveservices.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2025-01-01-preview"
-    def text_to_speech(text,voice="alloy",speed=1,api_key=""):
+    def text_to_speech(self,text,voice="alloy",speed=1,api_key=""):
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {api_key}"
