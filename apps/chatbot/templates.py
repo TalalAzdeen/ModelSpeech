@@ -16,7 +16,10 @@ from .components import *
 from .compoentchat import *
 from .routers import *
 import requests
-
+ 
+from azure.storage.blob import BlobServiceClient
+import uuid
+import os
 
 
 
@@ -53,12 +56,17 @@ class TemplateSpeechStudioBuilder:
 
         print(f"Message event: {self.msg_event}")
         print(f"Status code: {self.status_code}")
+    
+
+
+    CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=lhjaspcev15204396534;AccountKey=vbGXAI8Fqix/bV15xFfkU3pzgs9wCav0IRy9Vv0gVjh0s3sAZV1oLi3NgMC6fG6MsvhMg7/VohUC+AStizl4zg==;EndpointSuffix=core.windows.net"
+    CONTAINER_NAME = "soundsaudi"
     AZURE_TTS_ENDPOINT = "https://lahja-dev-resource.cognitiveservices.azure.com/openai/deployments/LAHJA-V1/audio/speech?api-version=2025-03-01-preview"
-    AZURE_CHAT_ENDPOINT = "https://lahja-dev-resource.cognitiveservices.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2025-01-01-preview"
-    def text_to_speech(self,text,voice="alloy",speed=1,api_key=""):
+    def text_to_speech_and_upload(self, text, api_key, file_type="wav", voice="alloy", speed=1):
+        try:
             headers = {
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {api_key}"
+                "api-key": api_key
             }
             data = {
                 "model": "LAHJA-V1",
@@ -66,13 +74,22 @@ class TemplateSpeechStudioBuilder:
                 "voice": voice,
                 "speed": speed
             }
-            response = requests.post(self.AZURE_TTS_ENDPOINT,json=data, headers=headers)
-            if response.status_code == 200:
-             
-                return response.content
-               
-            else:
-                return None
+            response = requests.post(self.AZURE_TTS_ENDPOINT, json=data, headers=headers)
+            if response.status_code != 200:
+                raise Exception(f"خطأ في TTS: {response.text}")
+            audio_data = response.content
+            unique_id = uuid.uuid4().hex
+            filename = f"{unique_id}.{file_type}"
+            blob_service_client = BlobServiceClient.from_connection_string(self.CONNECTION_STRING)
+            blob_client = blob_service_client.get_blob_client(container=self.CONTAINER_NAME, blob=filename)
+            blob_client.upload_blob(audio_data, overwrite=True)
+            blob_url = f"https://{blob_service_client.account_name}.blob.core.windows.net/{self.CONTAINER_NAME}/{filename}"
+            return blob_url
+        except Exception as e:
+            return self.error_event_handler(e, function_name="text_to_speech_and_upload")
+    
+
+
 
     def chat_with_gpt(self,text, api_key):
           headers= {
