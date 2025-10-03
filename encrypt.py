@@ -72,3 +72,5 @@ def get_company(data: EncryptionKeyRequest):
         raise HTTPException(status_code=404, detail="Company not found")
     decrypted_data = decrypt_json(found_item["encrypted_token"], found_item["encryption_key"])
     return {"company_info": decrypted_data}
+
+app.include_router(router)
