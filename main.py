@@ -10,6 +10,7 @@ import dashboard
 import t2speechmuit
 import userspace
 import menupage
+import encrypt
 import dach
 import roadGuard
 
@@ -56,3 +57,4 @@ for uiapp,path in APPS:
 from apps.api_routers import APIS
 for router,path in  APIS:
      app.include_router(router, prefix=f"/api/{path}")
+app.include_router(get_router(), prefix="/encrypt")
