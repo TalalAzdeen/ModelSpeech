@@ -32,17 +32,17 @@ class UserHandler:
             session_id: str
 
         # ------------------ دوال مساعدة ------------------
-        def load_db():
+        def load_db(self):
             if os.path.exists(self.DB_FILE):
                 with open(self.DB_FILE, "r", encoding="utf-8") as f:
                     return json.load(f)
             return {"encrypted_data_list": []}
 
-        def save_db():
+        def save_db(self):
             with open(self.DB_FILE, "w", encoding="utf-8") as f:
                 json.dump(self.db_json, f, indent=2, ensure_ascii=False)
 
-        def encrypt_json(data: dict) -> dict:
+        def encrypt_json(self,data: dict) -> dict:
             plaintext = json.dumps(data, ensure_ascii=False).encode('utf-8')
             key = AESGCM.generate_key(bit_length=256)
             aesgcm = AESGCM(key)
@@ -53,7 +53,7 @@ class UserHandler:
                 "encryption_key": base64.urlsafe_b64encode(key).decode('utf-8')
             }
 
-        def decrypt_json(encrypted_token_b64: str, encryption_key_b64: str) -> dict:
+        def decrypt_json(self,encrypted_token_b64: str, encryption_key_b64: str) -> dict:
             data = base64.urlsafe_b64decode(encrypted_token_b64)
             key = base64.urlsafe_b64decode(encryption_key_b64)
             nonce = data[:12]
