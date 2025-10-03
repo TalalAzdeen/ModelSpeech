@@ -74,4 +74,5 @@ def get_company(data: EncryptionKeyRequest):
     decrypted_data = decrypt_json(found_item["encrypted_token"], found_item["encryption_key"])
     return {"company_info": decrypted_data}
 
-app.include_router(router)
+def get_router(self):
+        return router
