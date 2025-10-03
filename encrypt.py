@@ -56,14 +56,14 @@ class EncryptionKeyRequest(BaseModel):
     encryption_key: str
 
 # ------------------ واجهات API ------------------
-@app.post("/add-company/")
+@router.post("/add-company/")
 def add_company(company_info: CompanyInfo):
     encrypted_item = encrypt_json(company_info.dict())
     db_json["encrypted_data_list"].append(encrypted_item)
     save_db(db_json)
     return {"encryption_key": encrypted_item["encryption_key"]}
 
-@app.post("/get-company/")
+@router.post("/get-company/")
 def get_company(data: EncryptionKeyRequest):
     found_item = next(
         (item for item in db_json["encrypted_data_list"] if item["encryption_key"] == data.encryption_key),
@@ -74,5 +74,5 @@ def get_company(data: EncryptionKeyRequest):
     decrypted_data = decrypt_json(found_item["encrypted_token"], found_item["encryption_key"])
     return {"company_info": decrypted_data}
 
-def get_router(self):
+def get_router():
         return router
