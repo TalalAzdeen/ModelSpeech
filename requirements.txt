@@ -8,3 +8,4 @@ psycopg2
 modelscope_studio
 openai
 azure-storage-blob
+cryptography
