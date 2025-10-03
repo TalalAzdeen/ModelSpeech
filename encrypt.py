@@ -7,6 +7,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 # ------------------ إعداد FastAPI ------------------
 app = FastAPI(title="Company Info Encryption API")
+router = APIRouter()
 
 DB_FILE = "db.json"
 
