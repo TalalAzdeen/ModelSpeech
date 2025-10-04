@@ -27,7 +27,7 @@ async def redirect_to_site():
 
 
 
- 
+company_handler = CompanyHandler() 
 app.include_router(company_handler.get_router(), prefix="/company", tags=["Company"])
 app = gr.mount_gradio_app(app, menupage.demo, path='/menupage')
 app = gr.mount_gradio_app(app, dach.demo, path='/dach')
