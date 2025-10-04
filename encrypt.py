@@ -10,6 +10,7 @@ DB_FILE = "db.json"
 
 
 class CompanyInfo(BaseModel):
+    key_service:str
     company_name: str
     license: str
     employees: int
