@@ -10,7 +10,7 @@ import dashboard
 import t2speechmuit
 import userspace
 import menupage
-from  encrypt import company_handler
+from  encrypt  import * 
 import dach
 import roadGuard
 
